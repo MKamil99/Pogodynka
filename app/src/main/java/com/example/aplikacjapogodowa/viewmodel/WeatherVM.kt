@@ -37,8 +37,8 @@ class WeatherVM(application: Application) : AndroidViewModel(application) {
             if (response.isSuccessful)
             {
                 val data = response.body()!!
-                currentHourlyForecast.value = data.hourly
-                currentDailyForecast.value = data.daily
+                currentHourlyForecast.value = data.hourly.subList(1, 25)
+                currentDailyForecast.value = data.daily.subList(0, 7)
             }
         }
     }

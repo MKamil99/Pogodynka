@@ -40,7 +40,7 @@ class MainFragment : Fragment() {
         hourlyForecastLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         hourlyForecastAdapter = HourlyForecastAdapter(weatherVM.currentHourlyForecast)
         dailyForecastLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        dailyForecastAdapter = DailyForecastAdapter(weatherVM.currentDailyForecast)
+        dailyForecastAdapter = DailyForecastAdapter(weatherVM.currentDailyForecast, requireContext())
         val view =  inflater.inflate(R.layout.main_screen, container, false)
 
         // Displaying current weather:
@@ -48,7 +48,7 @@ class MainFragment : Fragment() {
             if (it.cod == "200")
             {
                 view.tv_city.text = it.name
-                view.tv_dateAndTime.text = SimpleDateFormat("dd.MM.yyyy, HH:mm").format(it.dt!! * 1000)
+                view.tv_dateAndTime.text = SimpleDateFormat("EEE, dd.MM.yyyy, HH:mm").format(Date())
                 view.tv_currentTemperature.text = "${it.main!!.temp.roundToInt()}°C"
                 view.tv_feelsLike.text = "Odczuwalne: ${it.main.feels_like.roundToInt()}°C"
                 view.tv_description.text = it.weather[0].description.capitalize(Locale.ROOT)
@@ -56,10 +56,10 @@ class MainFragment : Fragment() {
                 val url = "https://openweathermap.org/img/wn/${it.weather[0].icon}@4x.png"
                 Glide.with(view.iv_currentWeatherIcon).load(url).centerCrop().into(view.iv_currentWeatherIcon)
 
-                //println("Ciśnienie: ${it.main.pressure} hPa")
-                //println("Wilgotność: ${it.main.humidity}%")
-                //println("Wschód Słońca: ${SimpleDateFormat("HH:mm").format(Date(it.sys!!.sunrise * 1000))}")
-                //println("Zachód Słońca: ${SimpleDateFormat("HH:mm").format(Date(it.sys.sunset * 1000))}")
+                view.tv_pressureValue.text = "${it.main.pressure} hPa"
+                view.tv_humidityValue.text = "${it.main.humidity}%"
+                view.tv_sunriseValue.text = SimpleDateFormat("HH:mm").format(Date(it.sys!!.sunrise * 1000))
+                view.tv_sunsetValue.text = SimpleDateFormat("HH:mm").format(Date(it.sys.sunset * 1000))
 
                 weatherVM.setForecasts(it.coord!!.lat, it.coord.lon)
             }
@@ -94,6 +94,10 @@ class MainFragment : Fragment() {
         dailyForecastRecyclerView = rv_daily.apply {
             this.layoutManager = dailyForecastLayoutManager
             this.adapter = dailyForecastAdapter
+        }
+
+        iv_refresh.setOnClickListener {
+            weatherVM.setCurrentWeather("Bytom")
         }
     }
 }

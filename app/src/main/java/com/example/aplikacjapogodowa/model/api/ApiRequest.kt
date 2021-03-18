@@ -18,7 +18,7 @@ interface ApiRequest {
     //                  INSTANCE WHICH PROVIDES COMMUNICATION WITH API
     companion object {
         private const val WEBSITE = "https://api.openweathermap.org/data/2.5/"
-        private const val apiKey = "YOUR_API_KEY"                               // place your apiKey here
+        private const val apiKey = "YOUR_API_KEY"     // place your apiKey here
         private const val units = "metric"
         private const val lang = "pl"
         private var INSTANCE : ApiRequest? = null

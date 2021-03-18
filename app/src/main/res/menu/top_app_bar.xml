@@ -10,9 +10,17 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/more"
-        android:title="@string/more"
-        android:contentDescription="@string/content_description_more"
-        app:showAsAction="never" />
+        android:id="@+id/findWithGPS"
+        android:icon="@drawable/ic_baseline_gps_fixed_24"
+        android:title="@string/findWithGPS"
+        android:contentDescription="@string/content_description_findWithGPS"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/elderlyMode"
+        android:icon="@drawable/ic_baseline_elderly_24"
+        android:title="@string/elderlyMode"
+        android:contentDescription="@string/content_description_elderlyMode"
+        app:showAsAction="ifRoom" />
 
 </menu>

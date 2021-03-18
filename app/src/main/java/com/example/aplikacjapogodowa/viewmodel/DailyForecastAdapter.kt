@@ -1,6 +1,7 @@
 package com.example.aplikacjapogodowa.viewmodel
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +15,8 @@ import com.example.aplikacjapogodowa.model.SpecificDayForecast
 import java.text.SimpleDateFormat
 import kotlin.math.roundToInt
 
-class DailyForecastAdapter(private val specificDayForecasts : LiveData<List<SpecificDayForecast>>) : RecyclerView.Adapter<DailyForecastAdapter.DailyForecastHolder>() {
+class DailyForecastAdapter(private val specificDayForecasts : LiveData<List<SpecificDayForecast>>,
+                           private val context : Context) : RecyclerView.Adapter<DailyForecastAdapter.DailyForecastHolder>() {
     inner class DailyForecastHolder(view: View): RecyclerView.ViewHolder(view)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : DailyForecastHolder {
@@ -25,7 +27,8 @@ class DailyForecastAdapter(private val specificDayForecasts : LiveData<List<Spec
     override fun onBindViewHolder(holder: DailyForecastHolder, position: Int) {
         // Day:
         val date = holder.itemView.findViewById<TextView>(R.id.tv_dateOrTime)
-        date.text = SimpleDateFormat("dd.MM").format(specificDayForecasts.value?.get(position)?.dt?.times(1000))
+        if (position == 0) date.text = context.getString(R.string.today)
+        else date.text = SimpleDateFormat("EEE").format(specificDayForecasts.value?.get(position)?.dt?.times(1000))
 
         // Icon:
         val icon = holder.itemView.findViewById<ImageView>(R.id.iv_weatherIcon)
