@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Aplikacja pogodowa</string>
+
+    <!-- Buttons -->
+    <string name="more">Więcej</string>
+    <string name="search">Szukaj</string>
+    <string name="content_description_search">Wyszukaj inne miasto</string>
+    <string name="content_description_more">Pokaż menu</string>
+
+    <!-- Section Titles -->
+    <string name="hour_forecast_title">PROGNOZA GODZINOWA</string>
+    <string name="details_title">SZCZEGÓŁY</string>
+    <string name="daily_forecast_title">PROGNOZA 7-DNIOWA</string>
+
+    <!-- Details -->
+    <string name="pressure">Ciśnienie atmosferyczne</string>
+    <string name="humidity">Wilgotność powietrza</string>
+    <string name="sunrise">Wschód Słońca</string>
+    <string name="sunset">Zachód Słońca</string>
+
+    <!-- Other strings -->
+    <string name="footer">Aplikacja korzysta z danych udostępnianych przez serwis OpenWeatherMap</string>
+</resources>
