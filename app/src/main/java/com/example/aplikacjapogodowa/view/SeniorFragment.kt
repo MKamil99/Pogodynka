@@ -15,14 +15,13 @@ import com.example.aplikacjapogodowa.R
 import com.example.aplikacjapogodowa.viewmodel.DailyForecastAdapter
 import com.example.aplikacjapogodowa.viewmodel.HourlyForecastAdapter
 import com.example.aplikacjapogodowa.viewmodel.WeatherVM
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.main_screen.*
 import kotlinx.android.synthetic.main.main_screen.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
-class MainFragment : Fragment() {
+class SeniorFragment  : Fragment() {
     // ViewModel:
     private lateinit var weatherVM : WeatherVM
 
@@ -40,10 +39,10 @@ class MainFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         weatherVM = ViewModelProvider(requireActivity()).get(WeatherVM::class.java)
         hourlyForecastLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        hourlyForecastAdapter = HourlyForecastAdapter(weatherVM.currentHourlyForecast, "Main")
+        hourlyForecastAdapter = HourlyForecastAdapter(weatherVM.currentHourlyForecast, "Senior")
         dailyForecastLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        dailyForecastAdapter = DailyForecastAdapter(weatherVM.currentDailyForecast, "Main", requireContext())
-        val view =  inflater.inflate(R.layout.main_screen, container, false)
+        dailyForecastAdapter = DailyForecastAdapter(weatherVM.currentDailyForecast, "Senior", requireContext())
+        val view =  inflater.inflate(R.layout.senior_screen, container, false)
 
         // Displaying current weather:
         weatherVM.currentWeather.observe(viewLifecycleOwner, {
@@ -61,7 +60,6 @@ class MainFragment : Fragment() {
 
                 // Details:
                 view.tv_pressureValue.text = "${it.main.pressure} hPa"
-                view.tv_humidityValue.text = "${it.main.humidity}%"
                 view.tv_sunriseValue.text = SimpleDateFormat("HH:mm").format(Date(it.sys!!.sunrise * 1000))
                 view.tv_sunsetValue.text = SimpleDateFormat("HH:mm").format(Date(it.sys.sunset * 1000))
 
@@ -106,7 +104,7 @@ class MainFragment : Fragment() {
                     true
                 }
                 R.id.elderlyMode -> {
-                    view.findNavController().navigate(R.id.action_mainFragment_to_seniorFragment)
+                    view.findNavController().navigate(R.id.action_seniorFragment_to_mainFragment)
                     true
                 }
                 else -> false

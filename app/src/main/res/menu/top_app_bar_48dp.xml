@@ -4,23 +4,23 @@
 
     <item
         android:id="@+id/search"
-        android:icon="@drawable/ic_search_24dp"
+        android:icon="@drawable/ic_search_48dp"
         android:title="@string/search"
         android:contentDescription="@string/content_description_search"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/findWithGPS"
-        android:icon="@drawable/ic_baseline_gps_fixed_24"
+        android:icon="@drawable/ic_baseline_gps_fixed_48"
         android:title="@string/findWithGPS"
         android:contentDescription="@string/content_description_findWithGPS"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/elderlyMode"
-        android:icon="@drawable/ic_baseline_elderly_24"
-        android:title="@string/elderlyMode"
-        android:contentDescription="@string/content_description_elderlyMode"
+        android:icon="@drawable/ic_baseline_emoji_people_48"
+        android:title="@string/changeMode"
+        android:contentDescription="@string/content_description_changeModeToSeniorMode"
         app:showAsAction="ifRoom" />
 
 </menu>

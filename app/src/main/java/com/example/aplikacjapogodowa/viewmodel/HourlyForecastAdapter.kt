@@ -14,11 +14,15 @@ import com.example.aplikacjapogodowa.model.SpecificHourForecast
 import java.text.SimpleDateFormat
 import kotlin.math.roundToInt
 
-class HourlyForecastAdapter(private val specificHourForecasts : LiveData<List<SpecificHourForecast>>) : RecyclerView.Adapter<HourlyForecastAdapter.HourlyForecastHolder>() {
+class HourlyForecastAdapter(private val specificHourForecasts : LiveData<List<SpecificHourForecast>>,
+                            private val inFragment : String) : RecyclerView.Adapter<HourlyForecastAdapter.HourlyForecastHolder>() {
     inner class HourlyForecastHolder(view: View): RecyclerView.ViewHolder(view)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : HourlyForecastHolder {
-        return HourlyForecastHolder(LayoutInflater.from(parent.context).inflate(R.layout.tile, parent, false))
+        return if (inFragment == "Main")
+            HourlyForecastHolder(LayoutInflater.from(parent.context).inflate(R.layout.tile, parent, false))
+        else    // inFragment == "Senior"
+            HourlyForecastHolder(LayoutInflater.from(parent.context).inflate(R.layout.tile_big, parent, false))
     }
 
     @SuppressLint("SimpleDateFormat", "SetTextI18n")

@@ -9,7 +9,7 @@
     <!-- TopBar -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,8 +21,8 @@
             style="@style/Widget.MaterialComponents.Toolbar.Primary"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:menu="@menu/top_app_bar_24dp"
-            app:title="@string/app_name"/>
+            app:menu="@menu/top_app_bar_48dp"
+            app:title="@string/app_name" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <!-- Main content -->
@@ -47,8 +47,9 @@
                 android:id="@+id/card_current"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
+                android:layout_marginStart="5dp"
                 android:layout_marginTop="20dp"
+                android:layout_marginEnd="5dp"
                 app:cardBackgroundColor="@color/myDesign_fg"
                 app:cardCornerRadius="20dp"
                 app:layout_constraintEnd_toStartOf="parent"
@@ -67,26 +68,26 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#FFFFFF"
-                        android:textSize="30sp"
+                        android:textSize="45sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextClock
                         android:id="@+id/tv_dateAndTime"
+                        android:format24Hour="EEEE, dd.MM.yyyy, HH:mm"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:format24Hour="EEE, dd.MM.yyyy, HH:mm"
-                        android:textColor="#80FFFFFF"
-                        android:textSize="15sp"
+                        android:textColor="#FFFFFF"
+                        android:textSize="25sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tv_city" />
 
                     <ImageView
                         android:id="@+id/iv_currentWeatherIcon"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
                         android:layout_marginTop="10dp"
                         app:layout_constraintEnd_toStartOf="@+id/tv_currentTemperature"
                         app:layout_constraintHorizontal_chainStyle="packed"
@@ -98,7 +99,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#FFFFFF"
-                        android:textSize="60sp"
+                        android:textSize="90sp"
                         app:layout_constraintBottom_toBottomOf="@+id/iv_currentWeatherIcon"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/iv_currentWeatherIcon"
@@ -110,7 +111,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:textColor="#FFFFFF"
-                        android:textSize="15sp"
+                        android:textSize="30sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/iv_currentWeatherIcon" />
@@ -120,7 +121,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#FFFFFF"
-                        android:textSize="15sp"
+                        android:textSize="30sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tv_feelsLike" />
@@ -135,10 +136,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="60dp"
                 android:text="@string/hour_forecast_title"
                 android:textColor="#FFFFFF"
-                android:textSize="15sp"
+                android:textSize="30sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -182,10 +183,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="60dp"
                 android:text="@string/details_title"
                 android:textColor="#FFFFFF"
-                android:textSize="15sp"
+                android:textSize="30sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -224,9 +225,10 @@
                             android:id="@+id/iv_pressure"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:paddingStart="5dp"
+                            android:paddingStart="15dp"
+                            android:scaleType="center"
                             android:scaleX="-1"
-                            app:srcCompat="@drawable/ic_pressure_24dp"
+                            app:srcCompat="@drawable/ic_pressure_48dp"
                             tools:ignore="RtlSymmetry" />
 
                         <TextView
@@ -236,8 +238,8 @@
                             android:layout_weight="1"
                             android:text="@string/pressure"
                             android:textAlignment="textStart"
-                            android:textColor="#80FFFFFF"
-                            android:textSize="15sp" />
+                            android:textColor="#FFFFFF"
+                            android:textSize="25sp" />
 
                         <TextView
                             android:id="@+id/tv_pressureValue"
@@ -245,44 +247,7 @@
                             android:layout_height="wrap_content"
                             android:textAlignment="viewEnd"
                             android:textColor="#FFFFFF"
-                            android:textSize="15sp" />
-
-                    </LinearLayout>
-
-                    <!-- Humidity -->
-                    <LinearLayout
-                        android:id="@+id/layout_humidity"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:id="@+id/iv_humidity"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:paddingEnd="5dp"
-                            app:srcCompat="@drawable/ic_humidity_24dp"
-                            tools:ignore="RtlSymmetry" />
-
-                        <TextView
-                            android:id="@+id/tv_humidity"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/humidity"
-                            android:textAlignment="textStart"
-                            android:textColor="#80FFFFFF"
-                            android:textSize="15sp" />
-
-                        <TextView
-                            android:id="@+id/tv_humidityValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAlignment="viewEnd"
-                            android:textColor="#FFFFFF"
-                            android:textSize="15sp" />
+                            android:textSize="30sp" />
 
                     </LinearLayout>
 
@@ -291,7 +256,7 @@
                         android:id="@+id/layout_sunrise"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="15dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
@@ -299,8 +264,8 @@
                             android:id="@+id/iv_sunrise"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:paddingEnd="5dp"
-                            app:srcCompat="@drawable/ic_sunrise_24dp"
+                            android:paddingEnd="15dp"
+                            app:srcCompat="@drawable/ic_sunrise_48dp"
                             tools:ignore="RtlSymmetry" />
 
                         <TextView
@@ -310,8 +275,8 @@
                             android:layout_weight="1"
                             android:text="@string/sunrise"
                             android:textAlignment="textStart"
-                            android:textColor="#80FFFFFF"
-                            android:textSize="15sp" />
+                            android:textColor="#FFFFFF"
+                            android:textSize="25sp" />
 
                         <TextView
                             android:id="@+id/tv_sunriseValue"
@@ -319,14 +284,14 @@
                             android:layout_height="wrap_content"
                             android:textAlignment="viewEnd"
                             android:textColor="#FFFFFF"
-                            android:textSize="15sp" />
+                            android:textSize="30sp" />
                     </LinearLayout>
 
                     <!-- Sunset -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="15dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
@@ -334,8 +299,8 @@
                             android:id="@+id/iv_sunset"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:paddingEnd="5dp"
-                            app:srcCompat="@drawable/ic_sunset_24dp"
+                            android:paddingEnd="15dp"
+                            app:srcCompat="@drawable/ic_sunset_48dp"
                             tools:ignore="RtlSymmetry" />
 
                         <TextView
@@ -345,8 +310,8 @@
                             android:layout_weight="1"
                             android:text="@string/sunset"
                             android:textAlignment="textStart"
-                            android:textColor="#80FFFFFF"
-                            android:textSize="15sp" />
+                            android:textColor="#FFFFFF"
+                            android:textSize="25sp" />
 
                         <TextView
                             android:id="@+id/tv_sunsetValue"
@@ -354,7 +319,7 @@
                             android:layout_height="wrap_content"
                             android:textAlignment="viewEnd"
                             android:textColor="#FFFFFF"
-                            android:textSize="15sp" />
+                            android:textSize="30sp" />
 
                     </LinearLayout>
 
@@ -368,10 +333,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="60dp"
                 android:text="@string/daily_forecast_title"
                 android:textColor="#FFFFFF"
-                android:textSize="15sp"
+                android:textSize="30sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -385,6 +350,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
+                android:layout_marginBottom="70dp"
                 app:cardBackgroundColor="@color/myDesign_fg"
                 app:cardCornerRadius="20dp"
                 app:layout_constraintEnd_toStartOf="parent"
@@ -407,24 +373,6 @@
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
-
-            <!-- Footer -->
-            <TextView
-                android:id="@+id/tv_footer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="50dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="60dp"
-                android:layout_marginEnd="50dp"
-                android:text="@string/footer"
-                android:textAlignment="center"
-                android:textColor="#FFFFFF"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/card_daily" />
 
         </LinearLayout>
 

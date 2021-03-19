@@ -16,19 +16,27 @@ import java.text.SimpleDateFormat
 import kotlin.math.roundToInt
 
 class DailyForecastAdapter(private val specificDayForecasts : LiveData<List<SpecificDayForecast>>,
+                           private val inFragment : String,
                            private val context : Context) : RecyclerView.Adapter<DailyForecastAdapter.DailyForecastHolder>() {
     inner class DailyForecastHolder(view: View): RecyclerView.ViewHolder(view)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : DailyForecastHolder {
-        return DailyForecastHolder(LayoutInflater.from(parent.context).inflate(R.layout.tile, parent, false))
+        return if (inFragment == "Main")
+            DailyForecastHolder(LayoutInflater.from(parent.context).inflate(R.layout.tile, parent, false))
+        else    // inFragment == "Senior"
+            DailyForecastHolder(LayoutInflater.from(parent.context).inflate(R.layout.tile_big, parent, false))
     }
 
     @SuppressLint("SimpleDateFormat", "SetTextI18n")
     override fun onBindViewHolder(holder: DailyForecastHolder, position: Int) {
         // Day:
         val date = holder.itemView.findViewById<TextView>(R.id.tv_dateOrTime)
-        if (position == 0) date.text = context.getString(R.string.today)
-        else date.text = SimpleDateFormat("EEE").format(specificDayForecasts.value?.get(position)?.dt?.times(1000))
+        if (position == 0)
+            date.text = context.getString(R.string.today)
+        else if (inFragment == "Main")
+            date.text = SimpleDateFormat("EEE").format(specificDayForecasts.value?.get(position)?.dt?.times(1000))
+        else  // inFragment == "Senior"
+            date.text = SimpleDateFormat("EEEE").format(specificDayForecasts.value?.get(position)?.dt?.times(1000))
 
         // Icon:
         val icon = holder.itemView.findViewById<ImageView>(R.id.iv_weatherIcon)

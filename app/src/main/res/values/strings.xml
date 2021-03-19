@@ -4,10 +4,11 @@
     <!-- Buttons -->
     <string name="search">Szukaj</string>
     <string name="findWithGPS">Lokalizuj</string>
-    <string name="more">Więcej</string>
+    <string name="changeMode">Zmień Tryb</string>
     <string name="content_description_search">Wyszukaj inne miasto</string>
     <string name="content_description_findWithGPS">Znajdź przy użyciu modułu GPS</string>
-    <string name="content_description_more">Pokaż menu</string>
+    <string name="content_description_changeModeToSeniorMode">Zmień tryb wyświetlania na Tryb Seniora</string>
+    <string name="content_description_changeModeToStandardMode">Zmień tryb wyświetlania na Tryb Standardowy</string>
 
     <!-- Section Titles -->
     <string name="hour_forecast_title">PROGNOZA GODZINOWA</string>
@@ -23,6 +24,4 @@
     <!-- Other strings -->
     <string name="footer">Aplikacja korzysta z danych udostępnianych przez serwis OpenWeatherMap</string>
     <string name="today">Dzisiaj</string>
-    <string name="elderlyMode">Tryb Seniora</string>
-    <string name="content_description_elderlyMode">Włącz Tryb Seniora</string>
 </resources>
