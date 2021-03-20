@@ -2,9 +2,6 @@
     <string name="app_name">Aplikacja pogodowa</string>
 
     <!-- Buttons -->
-    <string name="search">Szukaj</string>
-    <string name="findWithGPS">Lokalizuj</string>
-    <string name="changeMode">Zmień Tryb</string>
     <string name="content_description_search">Wyszukaj inne miasto</string>
     <string name="content_description_findWithGPS">Znajdź przy użyciu modułu GPS</string>
     <string name="content_description_changeModeToSeniorMode">Zmień tryb wyświetlania na Tryb Seniora</string>
@@ -21,7 +18,24 @@
     <string name="sunrise">Wschód Słońca</string>
     <string name="sunset">Zachód Słońca</string>
 
+    <!-- Dialogs -->
+    <string name="searchCityTitle">Wprowadź nazwę miasta:</string>
+    <string name="locateTitle">Pobrać bieżącą lokalizację?</string>
+    <string name="locateDescription">Pobrana zostanie prognoza pogody dla lokalizacji, w której się znajdujesz.</string>
+    <string name="changeDisplayTitle">Zmienić tryb?</string>
+    <string name="changeDisplayDescriptionToSenior">Zmiana trybu wyświetlania na Tryb Seniora zapewni lepszą widoczność elementów.</string>
+    <string name="changeDisplayDescriptionToStandard">Zmiana trybu wyświetlania na Tryb Standardowy zapewni większą ilość elementów na ekranie.</string>
+
+    <!-- Dialog buttons -->
+    <string name="cancel">Anuluj</string>
+    <string name="change">Zmień</string>
+    <string name="search">Szukaj</string>
+    <string name="locate">Lokalizuj</string>
+
     <!-- Other strings -->
     <string name="footer">Aplikacja korzysta z danych udostępnianych przez serwis OpenWeatherMap</string>
-    <string name="today">Dzisiaj</string>
+    <string name="cityNotFound">Nie znaleziono miasta o podanej nazwie.</string>
+    <string name="today">dzisiaj</string>
+    <string name="placeholderValue">BRAK DANYCH</string>
+    <string name="placeholderValue2">Wprowadź nazwę miasta lub pobierz dane z lokalizacji.</string>
 </resources>

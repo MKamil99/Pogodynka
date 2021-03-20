@@ -67,6 +67,7 @@
                         android:id="@+id/tv_city"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textAlignment="center"
                         android:textColor="#FFFFFF"
                         android:textSize="45sp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -78,6 +79,7 @@
                         android:format24Hour="EEEE, dd.MM.yyyy, HH:mm"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textAlignment="center"
                         android:textColor="#FFFFFF"
                         android:textSize="25sp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -86,7 +88,7 @@
 
                     <ImageView
                         android:id="@+id/iv_currentWeatherIcon"
-                        android:layout_width="200dp"
+                        android:layout_width="180dp"
                         android:layout_height="200dp"
                         android:layout_marginTop="10dp"
                         app:layout_constraintEnd_toStartOf="@+id/tv_currentTemperature"
@@ -99,7 +101,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#FFFFFF"
-                        android:textSize="90sp"
+                        android:textSize="80sp"
                         app:layout_constraintBottom_toBottomOf="@+id/iv_currentWeatherIcon"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/iv_currentWeatherIcon"
@@ -110,6 +112,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
+                        android:textAlignment="center"
                         android:textColor="#FFFFFF"
                         android:textSize="30sp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -120,6 +123,7 @@
                         android:id="@+id/tv_description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textAlignment="center"
                         android:textColor="#FFFFFF"
                         android:textSize="30sp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -377,5 +381,38 @@
         </LinearLayout>
 
     </ScrollView>
+
+    <!-- Placeholders displayed by default -->
+    <TextView
+        android:id="@+id/placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:textSize="45sp"
+        android:textStyle="bold"
+        android:layout_marginHorizontal="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+        app:layout_constraintBottom_toTopOf="@+id/placeholder2"
+        app:layout_constraintVertical_chainStyle="packed"
+        android:visibility="gone"
+        android:text="@string/placeholderValue" />
+    <TextView
+        android:id="@+id/placeholder2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:layout_marginHorizontal="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/placeholder"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"
+        android:text="@string/placeholderValue2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

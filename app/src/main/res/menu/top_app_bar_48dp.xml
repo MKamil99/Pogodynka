@@ -12,14 +12,14 @@
     <item
         android:id="@+id/findWithGPS"
         android:icon="@drawable/ic_baseline_gps_fixed_48"
-        android:title="@string/findWithGPS"
+        android:title="@string/locate"
         android:contentDescription="@string/content_description_findWithGPS"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/elderlyMode"
         android:icon="@drawable/ic_baseline_emoji_people_48"
-        android:title="@string/changeMode"
+        android:title="@string/change"
         android:contentDescription="@string/content_description_changeModeToSeniorMode"
         app:showAsAction="ifRoom" />
 

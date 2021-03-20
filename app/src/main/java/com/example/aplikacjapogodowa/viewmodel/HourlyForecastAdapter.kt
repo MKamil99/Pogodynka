@@ -14,6 +14,7 @@ import com.example.aplikacjapogodowa.model.SpecificHourForecast
 import java.text.SimpleDateFormat
 import kotlin.math.roundToInt
 
+// Adapter used in displaying hourly forecast:
 class HourlyForecastAdapter(private val specificHourForecasts : LiveData<List<SpecificHourForecast>>,
                             private val inFragment : String) : RecyclerView.Adapter<HourlyForecastAdapter.HourlyForecastHolder>() {
     inner class HourlyForecastHolder(view: View): RecyclerView.ViewHolder(view)

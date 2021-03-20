@@ -17,9 +17,7 @@
     <ImageView
         android:id="@+id/iv_weatherIcon"
         android:layout_width="190dp"
-        android:layout_height="200dp"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp" />
+        android:layout_height="200dp"/>
 
     <TextView
         android:id="@+id/tv_temperature"

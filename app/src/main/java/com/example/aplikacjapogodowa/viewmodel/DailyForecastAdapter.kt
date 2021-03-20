@@ -15,6 +15,7 @@ import com.example.aplikacjapogodowa.model.SpecificDayForecast
 import java.text.SimpleDateFormat
 import kotlin.math.roundToInt
 
+// Adapter used in displaying daily forecast:
 class DailyForecastAdapter(private val specificDayForecasts : LiveData<List<SpecificDayForecast>>,
                            private val inFragment : String,
                            private val context : Context) : RecyclerView.Adapter<DailyForecastAdapter.DailyForecastHolder>() {
