@@ -12,6 +12,9 @@ interface ApiRequest {
     @GET("weather?lang=$lang&units=$units&appid=$apiKey")
     fun getCurrentWeather(@Query("q") someText : String) : Call<CurrentWeatherResponse>
 
+    @GET("weather?lang=$lang&units=$units&appid=$apiKey")
+    fun getCurrentWeatherByCoordination(@Query("lat") lat : Double, @Query("lon") lon : Double) : Call<CurrentWeatherResponse>
+
     @GET("onecall?lang=$lang&units=$units&exclude=current,minutely,alerts&appid=$apiKey")
     fun getForecasts(@Query("lat") lat : Double, @Query("lon") lon : Double) : Call<OneCallResponse>
 

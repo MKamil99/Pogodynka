@@ -1,6 +1,7 @@
 package com.example.aplikacjapogodowa.viewmodel
 
 import android.app.Application
+import android.location.Location
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -31,6 +32,19 @@ class WeatherVM(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+    fun setCurrentWeatherByCoordination(latitude : Double, longitude : Double)
+    {
+        viewModelScope.launch {
+            val response = repository.getCurrentWeatherByCoordination(latitude, longitude).awaitResponse()
+            cityExists.value = response.isSuccessful
+            if (response.isSuccessful)
+            {
+                val data = response.body()!!
+                currentWeather.value = data
+            }
+        }
+    }
+
 
     // Forecasts (hourly for 24 hours and daily for 7 days):
     var currentHourlyForecast = MutableLiveData<List<SpecificHourForecast>>()
@@ -47,4 +61,9 @@ class WeatherVM(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+
+    // Current location:
+    var currentLocation = MutableLiveData<Location>()
+    fun setLocation(loc : Location) { currentLocation.value = loc }
 }

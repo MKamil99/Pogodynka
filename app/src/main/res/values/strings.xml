@@ -30,12 +30,18 @@
     <string name="cancel">Anuluj</string>
     <string name="change">Zmień</string>
     <string name="search">Szukaj</string>
-    <string name="locate">Lokalizuj</string>
+    <string name="locate">Pobierz</string>
+
+    <!-- Errors -->
+    <string name="cityNotFound">Nie znaleziono miasta o podanej nazwie.</string>
+    <string name="gpsNotFound">Nie znaleziono sygnału GPS.</string>
+    <string name="internetNotFound">Nie znaleziono połączenia z internetem.</string>
+
+    <!-- Start view -->
+    <string name="placeholderValue">BRAK DANYCH</string>
+    <string name="placeholderValue2">Wprowadź nazwę miasta lub pobierz dane z lokalizacji.</string>
 
     <!-- Other strings -->
     <string name="footer">Aplikacja korzysta z danych udostępnianych przez serwis OpenWeatherMap</string>
-    <string name="cityNotFound">Nie znaleziono miasta o podanej nazwie.</string>
     <string name="today">dzisiaj</string>
-    <string name="placeholderValue">BRAK DANYCH</string>
-    <string name="placeholderValue2">Wprowadź nazwę miasta lub pobierz dane z lokalizacji.</string>
 </resources>

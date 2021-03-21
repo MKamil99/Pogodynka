@@ -1,13 +1,19 @@
 package com.example.aplikacjapogodowa.view
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Location
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.size
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -18,20 +24,14 @@ import com.example.aplikacjapogodowa.R
 import com.example.aplikacjapogodowa.viewmodel.DailyForecastAdapter
 import com.example.aplikacjapogodowa.viewmodel.HourlyForecastAdapter
 import com.example.aplikacjapogodowa.viewmodel.WeatherVM
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
-import kotlinx.android.synthetic.main.main_screen.*
-import kotlinx.android.synthetic.main.main_screen.card_current
-import kotlinx.android.synthetic.main.main_screen.card_daily
-import kotlinx.android.synthetic.main.main_screen.card_details
-import kotlinx.android.synthetic.main.main_screen.card_hourly
 import kotlinx.android.synthetic.main.main_screen.rv_daily
 import kotlinx.android.synthetic.main.main_screen.rv_hourly
 import kotlinx.android.synthetic.main.main_screen.topAppBar
-import kotlinx.android.synthetic.main.main_screen.tv_hourly
 import kotlinx.android.synthetic.main.main_screen.view.*
-import kotlinx.android.synthetic.main.senior_screen.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
@@ -49,6 +49,7 @@ class MainFragment : Fragment() {
     private lateinit var dailyForecastAdapter : DailyForecastAdapter
     private lateinit var dailyForecastLayoutManager : LinearLayoutManager
     private lateinit var dailyForecastRecyclerView : RecyclerView
+
 
     @SuppressLint("SimpleDateFormat", "SetTextI18n")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -120,8 +121,12 @@ class MainFragment : Fragment() {
             if (!it) Snackbar.make(view, resources.getString(R.string.cityNotFound), Snackbar.LENGTH_LONG).show()
         })
 
+        // Check location:
+        launchGPS()
+
         return view
     }
+
 
     @SuppressLint("ResourceType")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -149,39 +154,62 @@ class MainFragment : Fragment() {
                             .setNeutralButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
                             .setPositiveButton(resources.getString(R.string.search)) { _, _ ->
                                 val editText = constraintLayout.findViewWithTag<TextInputEditText>("editTextTag")
-                                weatherVM.setCurrentWeather(editText.text.toString())
+                                // Check if there is an internet connection:
+                                if (!isConnectedToInternet(requireContext()))
+                                    Snackbar.make(view, resources.getString(R.string.internetNotFound), Snackbar.LENGTH_LONG).show()
+                                else weatherVM.setCurrentWeather(editText.text.toString())
                             }
                             .show()
                     true
                 }
+
                 // Find city by current location and download it's weather data:
                 R.id.findWithGPS -> {
-                    MaterialAlertDialogBuilder(requireContext())
+                    // Try to grant permissions if there are not granted yet:
+                    if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                            && ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                                launchGPS()
+                    // Otherwise show dialog:
+                    else MaterialAlertDialogBuilder(requireContext())
                             .setTitle(resources.getString(R.string.locateTitle))
                             .setMessage(resources.getString(R.string.locateDescription))
                             .setNeutralButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
                             .setPositiveButton(resources.getString(R.string.locate)) { _, _ ->
-                                // Locate
+                                // Show info about disabled GPS:
+                                if (weatherVM.currentLocation.value == null)
+                                    Snackbar.make(view, resources.getString(R.string.gpsNotFound), Snackbar.LENGTH_LONG).show()
+                                // Check internet connection:
+                                else if (!isConnectedToInternet(requireContext()))
+                                    Snackbar.make(view, resources.getString(R.string.internetNotFound), Snackbar.LENGTH_LONG).show()
+                                // Update weather info:
+                                else weatherVM.setCurrentWeatherByCoordination(
+                                        weatherVM.currentLocation.value!!.latitude,
+                                        weatherVM.currentLocation.value!!.longitude)
                             }
                             .show()
                     true
                 }
+
                 // Change display mode:
                 R.id.elderlyMode -> {
                     MaterialAlertDialogBuilder(requireContext())
                             .setTitle(resources.getString(R.string.changeDisplayTitle))
                             .setMessage(resources.getString(R.string.changeDisplayDescriptionToSenior))
                             .setNeutralButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
-                            .setPositiveButton(resources.getString(R.string.change)) { _, _ -> view.findNavController().navigate(R.id.action_mainFragment_to_seniorFragment) }
+                            .setPositiveButton(resources.getString(R.string.change)) { _, _ ->
+                                view.findNavController().navigate(R.id.action_mainFragment_to_seniorFragment) }
                             .show()
                     true
                 }
+
                 else -> false
             }
         }
     }
 
-    // Function responsible for adding input field in "searching city" dialog:
+
+    // Function responsible for adding input field in "searching city" dialog
+    // (based on: https://android--code.blogspot.com/2020/03/android-kotlin-alertdialog-edittext.html):
     private fun makeLayout(context: Context) : ConstraintLayout {
         // Prepare height-width parameters for layout and input:
         val layoutParams = ConstraintLayout.LayoutParams(
@@ -202,5 +230,34 @@ class MainFragment : Fragment() {
         // Connect them and return:
         constraintLayout.addView(editText)
         return constraintLayout
+    }
+
+
+    // Function responsible for using GPS:
+    private fun launchGPS() {
+        // Requesting permissions to use GPS: https://www.tutorialspoint.com/how-to-get-the-current-gps-location-programmatically-on-android-using-kotlin
+        if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if ((ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+                ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 2) }
+            return
+        }
+
+        LocationServices.getFusedLocationProviderClient(requireActivity()).lastLocation.addOnSuccessListener {
+            location: Location? -> if (location != null) weatherVM.setLocation(location)
+        }
+    }
+
+    // Reaction for granting GPS permissions:
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == 2 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) launchGPS()
+    }
+
+
+    // Checking connection with the internet (based on: https://developer.android.com/training/monitoring-device-state/connectivity-status-type):
+    private fun isConnectedToInternet(context: Context) : Boolean {
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
+        return activeNetwork?.isConnectedOrConnecting == true
     }
 }
