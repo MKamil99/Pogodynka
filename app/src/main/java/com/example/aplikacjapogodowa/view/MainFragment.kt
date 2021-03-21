@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Location
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Bundle
@@ -13,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -24,7 +22,6 @@ import com.example.aplikacjapogodowa.R
 import com.example.aplikacjapogodowa.viewmodel.DailyForecastAdapter
 import com.example.aplikacjapogodowa.viewmodel.HourlyForecastAdapter
 import com.example.aplikacjapogodowa.viewmodel.WeatherVM
-import com.google.android.gms.location.LocationServices
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
@@ -122,7 +119,7 @@ class MainFragment : Fragment() {
         })
 
         // Check location:
-        launchGPS()
+        weatherVM.launchGPS(requireActivity(), true)
 
         return view
     }
@@ -168,7 +165,7 @@ class MainFragment : Fragment() {
                     // Try to grant permissions if there are not granted yet:
                     if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                             && ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-                                launchGPS()
+                                weatherVM.launchGPS(requireActivity())
                     // Otherwise show dialog:
                     else MaterialAlertDialogBuilder(requireContext())
                             .setTitle(resources.getString(R.string.locateTitle))
@@ -230,27 +227,6 @@ class MainFragment : Fragment() {
         // Connect them and return:
         constraintLayout.addView(editText)
         return constraintLayout
-    }
-
-
-    // Function responsible for using GPS:
-    private fun launchGPS() {
-        // Requesting permissions to use GPS: https://www.tutorialspoint.com/how-to-get-the-current-gps-location-programmatically-on-android-using-kotlin
-        if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if ((ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-                ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 2) }
-            return
-        }
-
-        LocationServices.getFusedLocationProviderClient(requireActivity()).lastLocation.addOnSuccessListener {
-            location: Location? -> if (location != null) weatherVM.setLocation(location)
-        }
-    }
-
-    // Reaction for granting GPS permissions:
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == 2 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) launchGPS()
     }
 
 

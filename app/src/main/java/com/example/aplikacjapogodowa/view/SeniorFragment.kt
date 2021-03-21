@@ -116,6 +116,9 @@ class SeniorFragment : Fragment() {
             if (!it) Snackbar.make(view, resources.getString(R.string.cityNotFound), Snackbar.LENGTH_LONG).show()
         })
 
+        // Check location:
+        weatherVM.launchGPS(requireActivity(), true)
+
         return view
     }
 
@@ -159,7 +162,7 @@ class SeniorFragment : Fragment() {
                     // Try to grant permissions if there are not granted yet:
                     if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                             && ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-                        launchGPS()
+                        weatherVM.launchGPS(requireActivity())
                     // Otherwise show dialog:
                     else MaterialAlertDialogBuilder(requireContext())
                             .setTitle(resources.getString(R.string.locateTitle))
@@ -222,29 +225,6 @@ class SeniorFragment : Fragment() {
         constraintLayout.addView(editText)
         return constraintLayout
     }
-
-
-
-    // Function responsible for using GPS:
-    private fun launchGPS() {
-        // Requesting permissions to use GPS: https://www.tutorialspoint.com/how-to-get-the-current-gps-location-programmatically-on-android-using-kotlin
-        if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if ((ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-                ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 2) }
-            return
-        }
-
-        LocationServices.getFusedLocationProviderClient(requireActivity()).lastLocation.addOnSuccessListener {
-            location: Location? -> if (location != null) weatherVM.setLocation(location)
-        }
-    }
-
-    // Reaction for granting GPS permissions:
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == 2 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) launchGPS()
-    }
-
 
 
     // Checking connection with the internet (based on: https://developer.android.com/training/monitoring-device-state/connectivity-status-type):

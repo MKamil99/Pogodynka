@@ -1,7 +1,12 @@
 package com.example.aplikacjapogodowa.viewmodel
 
+import android.Manifest
+import android.app.Activity
 import android.app.Application
+import android.content.pm.PackageManager
 import android.location.Location
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -10,6 +15,7 @@ import com.example.aplikacjapogodowa.model.SpecificHourForecast
 import com.example.aplikacjapogodowa.model.api.ApiRequest
 import com.example.aplikacjapogodowa.model.api.WeatherRepository
 import com.example.aplikacjapogodowa.model.responses.CurrentWeatherResponse
+import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.launch
 import retrofit2.awaitResponse
 
@@ -65,5 +71,25 @@ class WeatherVM(application: Application) : AndroidViewModel(application) {
 
     // Current location:
     var currentLocation = MutableLiveData<Location>()
-    fun setLocation(loc : Location) { currentLocation.value = loc }
+    fun launchGPS(activity: Activity, searchNow : Boolean = false) {
+
+        // Request permissions to use GPS: https://www.tutorialspoint.com/how-to-get-the-current-gps-location-programmatically-on-android-using-kotlin
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if ((ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+                ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 2) }
+            return
+        }
+
+        // Update location:
+        LocationServices.getFusedLocationProviderClient(activity).lastLocation.addOnSuccessListener {
+            location: Location? ->
+            if (location != null) {
+                currentLocation.value = location
+                // Get current location's current weather if app has just been launched:
+                if (searchNow && currentWeather.value == null)
+                    setCurrentWeatherByCoordination(currentLocation.value!!.latitude, currentLocation.value!!.longitude)
+            }
+        }
+    }
 }
