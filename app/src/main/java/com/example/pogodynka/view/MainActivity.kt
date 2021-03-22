@@ -1,11 +1,11 @@
-package com.example.aplikacjapogodowa.view
+package com.example.pogodynka.view
 
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.example.aplikacjapogodowa.R
-import com.example.aplikacjapogodowa.viewmodel.WeatherVM
+import com.example.pogodynka.R
+import com.example.pogodynka.viewmodel.WeatherVM
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,6 +1,6 @@
-package com.example.aplikacjapogodowa.model.responses
+package com.example.pogodynka.model.responses
 
-import com.example.aplikacjapogodowa.model.*
+import com.example.pogodynka.model.*
 
 data class CurrentWeatherResponse(
     val cod : String,

@@ -1,7 +1,7 @@
-package com.example.aplikacjapogodowa.model.api
+package com.example.pogodynka.model.api
 
-import com.example.aplikacjapogodowa.model.responses.CurrentWeatherResponse
-import com.example.aplikacjapogodowa.model.responses.OneCallResponse
+import com.example.pogodynka.model.responses.CurrentWeatherResponse
+import com.example.pogodynka.model.responses.OneCallResponse
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

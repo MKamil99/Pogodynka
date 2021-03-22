@@ -1,4 +1,4 @@
-package com.example.aplikacjapogodowa.viewmodel
+package com.example.pogodynka.viewmodel
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -9,8 +9,8 @@ import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.aplikacjapogodowa.R
-import com.example.aplikacjapogodowa.model.SpecificHourForecast
+import com.example.pogodynka.R
+import com.example.pogodynka.model.SpecificHourForecast
 import java.text.SimpleDateFormat
 import kotlin.math.roundToInt
 

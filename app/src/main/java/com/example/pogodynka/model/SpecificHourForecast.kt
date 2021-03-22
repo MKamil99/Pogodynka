@@ -1,4 +1,4 @@
-package com.example.aplikacjapogodowa.model
+package com.example.pogodynka.model
 
 data class SpecificHourForecast(
     val dt : Long,

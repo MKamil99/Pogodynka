@@ -1,4 +1,4 @@
-package com.example.aplikacjapogodowa.view
+package com.example.pogodynka.view
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -22,10 +22,10 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.aplikacjapogodowa.R
-import com.example.aplikacjapogodowa.viewmodel.DailyForecastAdapter
-import com.example.aplikacjapogodowa.viewmodel.HourlyForecastAdapter
-import com.example.aplikacjapogodowa.viewmodel.WeatherVM
+import com.example.pogodynka.R
+import com.example.pogodynka.viewmodel.DailyForecastAdapter
+import com.example.pogodynka.viewmodel.HourlyForecastAdapter
+import com.example.pogodynka.viewmodel.WeatherVM
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText

@@ -1,4 +1,4 @@
-package com.example.aplikacjapogodowa.viewmodel
+package com.example.pogodynka.viewmodel
 
 import android.Manifest
 import android.app.Activity
@@ -10,11 +10,11 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.aplikacjapogodowa.model.SpecificDayForecast
-import com.example.aplikacjapogodowa.model.SpecificHourForecast
-import com.example.aplikacjapogodowa.model.api.ApiRequest
-import com.example.aplikacjapogodowa.model.api.WeatherRepository
-import com.example.aplikacjapogodowa.model.responses.CurrentWeatherResponse
+import com.example.pogodynka.model.SpecificDayForecast
+import com.example.pogodynka.model.SpecificHourForecast
+import com.example.pogodynka.model.api.ApiRequest
+import com.example.pogodynka.model.api.WeatherRepository
+import com.example.pogodynka.model.responses.CurrentWeatherResponse
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.launch
 import retrofit2.awaitResponse
