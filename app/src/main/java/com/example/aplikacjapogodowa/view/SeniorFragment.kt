@@ -153,14 +153,15 @@ class SeniorFragment : Fragment() {
                     customTitle.text = resources.getString(R.string.searchCityTitle)
                     customTitle.textSize = 22F
                     customTitle.typeface = Typeface.DEFAULT_BOLD
+                    customTitle.textAlignment = View.TEXT_ALIGNMENT_CENTER
                     customTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                    customTitle.setPadding(60, 60, 60, 20);
+                    customTitle.setPadding(40, 60, 40, 20)
 
                     // Building the dialog:
                     val builder = MaterialAlertDialogBuilder(requireContext())
                             .setCustomTitle(customTitle)
                             .setView(customLayout)
-                            .setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
+                            .setNeutralButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
                             .setPositiveButton(resources.getString(R.string.search)) { _, _ ->
                                 // Check if there is an internet connection:
                                 if (!isConnectedToInternet(requireContext()))
@@ -182,8 +183,8 @@ class SeniorFragment : Fragment() {
 
                     // Resizing buttons:
                     builder.getButton(Dialog.BUTTON_POSITIVE).textSize = 20F
-                    builder.getButton(Dialog.BUTTON_NEGATIVE).textSize = 20F
-                    builder.getButton(Dialog.BUTTON_NEGATIVE).setPadding(0,80,0,0)
+                    builder.getButton(Dialog.BUTTON_NEUTRAL).textSize = 20F
+                    builder.getButton(Dialog.BUTTON_NEUTRAL).setPadding(20,80,0,0)
 
                     true
                 }
@@ -203,14 +204,15 @@ class SeniorFragment : Fragment() {
                         customTitle.text = resources.getString(R.string.locateTitle)
                         customTitle.textSize = 22F
                         customTitle.typeface = Typeface.DEFAULT_BOLD
+                        customTitle.textAlignment = View.TEXT_ALIGNMENT_CENTER
                         customTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                        customTitle.setPadding(60, 60, 60, 20);
+                        customTitle.setPadding(40, 60, 40, 20)
 
                         // Building the dialog:
                         val builder = MaterialAlertDialogBuilder(requireContext())
                                 .setCustomTitle(customTitle)
                                 .setMessage(resources.getString(R.string.locateDescription))
-                                .setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
+                                .setNeutralButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
                                 .setPositiveButton(resources.getString(R.string.locate)) { _, _ ->
                                     // Show info about disabled GPS (actually it checks the last location):
                                     if (weatherVM.currentLocation.value == null)
@@ -237,9 +239,10 @@ class SeniorFragment : Fragment() {
 
                         // Resizing message and buttons:
                         builder.findViewById<TextView>(android.R.id.message)?.textSize = 22F
+                        builder.findViewById<TextView>(android.R.id.message)?.textAlignment = View.TEXT_ALIGNMENT_CENTER
                         builder.getButton(Dialog.BUTTON_POSITIVE).textSize = 20F
-                        builder.getButton(Dialog.BUTTON_NEGATIVE).textSize = 20F
-                        builder.getButton(Dialog.BUTTON_NEGATIVE).setPadding(0,80,0,0)
+                        builder.getButton(Dialog.BUTTON_NEUTRAL).textSize = 20F
+                        builder.getButton(Dialog.BUTTON_NEUTRAL).setPadding(20,80,0,0)
 
                         // Changing message color to black (based on:
                         // https://stackoverflow.com/questions/31590714/getcolorint-id-deprecated-on-android-6-0-marshmallow-api-23):
@@ -257,22 +260,24 @@ class SeniorFragment : Fragment() {
                     customTitle.text = resources.getString(R.string.changeDisplayTitle)
                     customTitle.textSize = 22F
                     customTitle.typeface = Typeface.DEFAULT_BOLD
+                    customTitle.textAlignment = View.TEXT_ALIGNMENT_CENTER
                     customTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                    customTitle.setPadding(60, 60, 60, 20);
+                    customTitle.setPadding(40, 60, 40, 20)
 
                     // Building the dialog:
                     val builder = MaterialAlertDialogBuilder(requireContext())
                             .setCustomTitle(customTitle)
                             .setMessage(resources.getString(R.string.changeDisplayDescriptionToStandard))
-                            .setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
+                            .setNeutralButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
                             .setPositiveButton(resources.getString(R.string.change)) { _, _ -> view.findNavController().navigate(R.id.action_seniorFragment_to_mainFragment) }
                             .show()
 
                     // Resizing message and buttons:
                     builder.findViewById<TextView>(android.R.id.message)?.textSize = 22F
+                    builder.findViewById<TextView>(android.R.id.message)?.textAlignment = View.TEXT_ALIGNMENT_CENTER
                     builder.getButton(Dialog.BUTTON_POSITIVE).textSize = 20F
-                    builder.getButton(Dialog.BUTTON_NEGATIVE).textSize = 20F
-                    builder.getButton(Dialog.BUTTON_NEGATIVE).setPadding(0,80,0,0)
+                    builder.getButton(Dialog.BUTTON_NEUTRAL).textSize = 20F
+                    builder.getButton(Dialog.BUTTON_NEUTRAL).setPadding(20,80,0,0)
 
                     // Changing message color to black:
                     builder.findViewById<TextView>(android.R.id.message)?.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
@@ -302,7 +307,7 @@ class SeniorFragment : Fragment() {
 
         // Prepare editTextInput:
         val editText = TextInputEditText(context)
-        layoutParams.setMargins(50, 0, 50, 0)
+        layoutParams.setMargins(40, 0, 40, 0)
         editText.layoutParams = layoutParams
         editText.textSize = 40F
         editText.tag = "editTextTag"

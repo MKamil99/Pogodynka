@@ -234,7 +234,7 @@ class MainFragment : Fragment() {
 
         // Prepare editTextInput:
         val editText = TextInputEditText(context)
-        layoutParams.setMargins(50, 0, 50, 0)
+        layoutParams.setMargins(40, 0, 40, 0)
         editText.layoutParams = layoutParams
         editText.tag = "editTextTag"
 
