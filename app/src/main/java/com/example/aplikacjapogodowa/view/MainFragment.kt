@@ -115,7 +115,11 @@ class MainFragment : Fragment() {
 
         // Displaying info about wrong city:
         weatherVM.cityExists.observe(viewLifecycleOwner, {
-            if (!it) Snackbar.make(view, resources.getString(R.string.cityNotFound), Snackbar.LENGTH_SHORT).show()
+            if (!it)
+            {
+                Snackbar.make(view, resources.getString(R.string.cityNotFound), Snackbar.LENGTH_SHORT).show()
+                weatherVM.cityExists.value = true
+            }
         })
 
         // Check location:

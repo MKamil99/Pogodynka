@@ -114,7 +114,14 @@ class SeniorFragment : Fragment() {
 
         // Displaying info about wrong city:
         weatherVM.cityExists.observe(viewLifecycleOwner, {
-            if (!it) Snackbar.make(view, resources.getString(R.string.cityNotFound), Snackbar.LENGTH_LONG).show()
+            if (!it)
+            {
+                val snack = Snackbar.make(view, resources.getString(R.string.cityNotFound), Snackbar.LENGTH_LONG)
+                snack.view.findViewById<TextView>(R.id.snackbar_text).textSize = 25F
+                snack.view.findViewById<TextView>(R.id.snackbar_text).textAlignment = View.TEXT_ALIGNMENT_CENTER
+                snack.show()
+                weatherVM.cityExists.value = true
+            }
         })
 
         // Check location:
@@ -168,7 +175,8 @@ class SeniorFragment : Fragment() {
                                 {
                                     // Senior's snackbars are bigger and are displayed longer:
                                     val snack = Snackbar.make(view, resources.getString(R.string.internetNotFound), Snackbar.LENGTH_LONG)
-                                    snack.view.findViewById<TextView>(R.id.snackbar_text).textSize = 20F
+                                    snack.view.findViewById<TextView>(R.id.snackbar_text).textSize = 25F
+                                    snack.view.findViewById<TextView>(R.id.snackbar_text).textAlignment = View.TEXT_ALIGNMENT_CENTER
                                     snack.show()
 
                                 }
@@ -219,7 +227,8 @@ class SeniorFragment : Fragment() {
                                     {
                                         // Senior's snackbars are bigger and are displayed longer:
                                         val snack = Snackbar.make(view, resources.getString(R.string.gpsNotFound), Snackbar.LENGTH_LONG)
-                                        snack.view.findViewById<TextView>(R.id.snackbar_text).textSize = 20F
+                                        snack.view.findViewById<TextView>(R.id.snackbar_text).textSize = 25F
+                                        snack.view.findViewById<TextView>(R.id.snackbar_text).textAlignment = View.TEXT_ALIGNMENT_CENTER
                                         snack.show()
                                     }
                                     // Check internet connection:
@@ -227,7 +236,8 @@ class SeniorFragment : Fragment() {
                                     {
                                         // Senior's snackbars are bigger and are displayed longer:
                                         val snack = Snackbar.make(view, resources.getString(R.string.internetNotFound), Snackbar.LENGTH_LONG)
-                                        snack.view.findViewById<TextView>(R.id.snackbar_text).textSize = 20F
+                                        snack.view.findViewById<TextView>(R.id.snackbar_text).textSize = 25F
+                                        snack.view.findViewById<TextView>(R.id.snackbar_text).textAlignment = View.TEXT_ALIGNMENT_CENTER
                                         snack.show()
                                     }
                                     // Update weather info:
