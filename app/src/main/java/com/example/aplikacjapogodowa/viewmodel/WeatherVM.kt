@@ -87,8 +87,7 @@ class WeatherVM(application: Application) : AndroidViewModel(application) {
             if (location != null) {
                 currentLocation.value = location
                 // Get current location's current weather if app has just been launched:
-                if (searchNow && currentWeather.value == null)
-                    setCurrentWeatherByCoordination(currentLocation.value!!.latitude, currentLocation.value!!.longitude)
+                if (searchNow) setCurrentWeatherByCoordination(currentLocation.value!!.latitude, currentLocation.value!!.longitude)
             }
         }
     }

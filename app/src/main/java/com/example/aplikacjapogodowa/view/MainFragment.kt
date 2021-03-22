@@ -115,11 +115,11 @@ class MainFragment : Fragment() {
 
         // Displaying info about wrong city:
         weatherVM.cityExists.observe(viewLifecycleOwner, {
-            if (!it) Snackbar.make(view, resources.getString(R.string.cityNotFound), Snackbar.LENGTH_LONG).show()
+            if (!it) Snackbar.make(view, resources.getString(R.string.cityNotFound), Snackbar.LENGTH_SHORT).show()
         })
 
         // Check location:
-        weatherVM.launchGPS(requireActivity(), true)
+        weatherVM.launchGPS(requireActivity(), weatherVM.currentWeather.value == null && isConnectedToInternet(requireActivity()))
 
         return view
     }
@@ -142,19 +142,28 @@ class MainFragment : Fragment() {
         // Top Bar Actions:
         topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
+
                 // Find city by name and download it's weather data:
                 R.id.search -> {
-                    val constraintLayout = makeLayout(requireContext())
+
+                    // Custom view with editText component:
+                    val customLayout = makeLayout(requireContext())
+
+                    // Building the dialog:
                     MaterialAlertDialogBuilder(requireContext())
                             .setTitle(resources.getString(R.string.searchCityTitle))
-                            .setView(constraintLayout)
-                            .setNeutralButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
+                            .setView(customLayout)
+                            .setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
                             .setPositiveButton(resources.getString(R.string.search)) { _, _ ->
-                                val editText = constraintLayout.findViewWithTag<TextInputEditText>("editTextTag")
                                 // Check if there is an internet connection:
                                 if (!isConnectedToInternet(requireContext()))
-                                    Snackbar.make(view, resources.getString(R.string.internetNotFound), Snackbar.LENGTH_LONG).show()
-                                else weatherVM.setCurrentWeather(editText.text.toString())
+                                    Snackbar.make(view, resources.getString(R.string.internetNotFound), Snackbar.LENGTH_SHORT).show()
+                                // Update weather
+                                else
+                                {
+                                    val editText = customLayout.findViewWithTag<TextInputEditText>("editTextTag")
+                                    weatherVM.setCurrentWeather(editText.text.toString())
+                                }
                             }
                             .show()
                     true
@@ -162,40 +171,45 @@ class MainFragment : Fragment() {
 
                 // Find city by current location and download it's weather data:
                 R.id.findWithGPS -> {
-                    // Try to grant permissions if there are not granted yet:
-                    if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                            && ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-                                weatherVM.launchGPS(requireActivity())
-                    // Otherwise show dialog:
-                    else MaterialAlertDialogBuilder(requireContext())
+
+                    // Granting permissions / finding the city:
+                    weatherVM.launchGPS(requireActivity())
+
+                    // Building the dialog:
+                    if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        || ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+                            MaterialAlertDialogBuilder(requireContext())
                             .setTitle(resources.getString(R.string.locateTitle))
                             .setMessage(resources.getString(R.string.locateDescription))
-                            .setNeutralButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
+                            .setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
                             .setPositiveButton(resources.getString(R.string.locate)) { _, _ ->
-                                // Show info about disabled GPS:
+                                // Show info about disabled GPS (actually it checks last location):
                                 if (weatherVM.currentLocation.value == null)
-                                    Snackbar.make(view, resources.getString(R.string.gpsNotFound), Snackbar.LENGTH_LONG).show()
+                                    Snackbar.make(view, resources.getString(R.string.gpsNotFound), Snackbar.LENGTH_SHORT).show()
                                 // Check internet connection:
                                 else if (!isConnectedToInternet(requireContext()))
-                                    Snackbar.make(view, resources.getString(R.string.internetNotFound), Snackbar.LENGTH_LONG).show()
+                                    Snackbar.make(view, resources.getString(R.string.internetNotFound), Snackbar.LENGTH_SHORT).show()
                                 // Update weather info:
                                 else weatherVM.setCurrentWeatherByCoordination(
                                         weatherVM.currentLocation.value!!.latitude,
                                         weatherVM.currentLocation.value!!.longitude)
                             }
                             .show()
+
                     true
                 }
 
                 // Change display mode:
                 R.id.elderlyMode -> {
+
+                    // Building the dialog:
                     MaterialAlertDialogBuilder(requireContext())
                             .setTitle(resources.getString(R.string.changeDisplayTitle))
                             .setMessage(resources.getString(R.string.changeDisplayDescriptionToSenior))
-                            .setNeutralButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
-                            .setPositiveButton(resources.getString(R.string.change)) { _, _ ->
-                                view.findNavController().navigate(R.id.action_mainFragment_to_seniorFragment) }
+                            .setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
+                            .setPositiveButton(resources.getString(R.string.change)) { _, _ -> view.findNavController().navigate(R.id.action_mainFragment_to_seniorFragment) }
                             .show()
+
                     true
                 }
 

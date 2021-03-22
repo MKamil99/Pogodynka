@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Aplikacja pogodowa</string>
+    <string name="app_name">Pogodynka</string>
 
     <!-- Buttons -->
     <string name="content_description_search">Wyszukaj inne miasto</string>
@@ -24,7 +24,7 @@
     <string name="locateDescription">Pobrana zostanie prognoza pogody dla lokalizacji, w której się znajdujesz.</string>
     <string name="changeDisplayTitle">Zmienić tryb?</string>
     <string name="changeDisplayDescriptionToSenior">Zmiana trybu wyświetlania na Tryb Seniora zapewni lepszą widoczność elementów.</string>
-    <string name="changeDisplayDescriptionToStandard">Zmiana trybu wyświetlania na Tryb Standardowy zapewni większą ilość elementów na ekranie.</string>
+    <string name="changeDisplayDescriptionToStandard">Zmiana trybu wyświetlania na Tryb Standardowy zapewni większą ilość elementów na ekranie, ale znacząco zmniejszy czcionkę.</string>
 
     <!-- Dialog buttons -->
     <string name="cancel">Anuluj</string>
