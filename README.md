@@ -1,7 +1,4 @@
-# Pogodynka
-**Pogodynka** is a project written for **Mobile Multimedia Interfaces** course during 
-the 6th semester of Computer Science at the Silesian University of Technology.
-
+# WeatherApp
 ### Table of contents
 * [Project description](#project-description)
 * [Used technologies](#used-technologies)
@@ -10,7 +7,7 @@ the 6th semester of Computer Science at the Silesian University of Technology.
 * [Project status](#project-status)
 
 ### Project description
-**Pogodynka** is a mobile application that uses **OpenWeatherMap API** to present information about **current weather**
+**WeatherApp** is a mobile application that uses **OpenWeatherMap API** to present information about **current weather**
 (actual temperature, perceptible temperature, weather description, atmospheric pressure, air humidity, sunrise, sunset), 
 **daily forecast for next 7 days** and **hourly forecast for next 24 hours**. To find specific data you can **enter the
 name** of the city by yourself or **use GPS signal**. The application consists of **two design modes**: Standard Mode 
@@ -26,7 +23,7 @@ name** of the city by yourself or **use GPS signal**. The application consists o
 * Navigation 2.3.4 - library responsible for moving between the fragments.
 
 ### How to compile it?
-Pogodynka uses REST API with API KEY. If you just want to test it on your mobile phone, you can download an .apk 
+WeatherApp uses REST API with API KEY. If you just want to test it on your mobile phone, you can download an .apk 
 from Releases and install it. Otherwise, if you want to change something in the code and compile it by yourself, 
 you'll have to **generate your own API KEY** as it is not contained in this repository. To do it, follow the steps 
 from this [instruction](https://developers.themoviedb.org/3/getting-started/introduction) and replace

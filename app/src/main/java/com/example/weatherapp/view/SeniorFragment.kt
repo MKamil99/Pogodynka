@@ -1,29 +1,22 @@
 package com.example.weatherapp.view
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.Typeface
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.SeniorScreenBinding
 import com.example.weatherapp.model.responses.CurrentWeatherResponse
-import com.example.weatherapp.viewmodel.*
+import com.example.weatherapp.view.adapters.SeniorDailyForecastAdapter
+import com.example.weatherapp.view.adapters.SeniorHourlyForecastAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
@@ -31,20 +24,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
-class SeniorFragment : Fragment() {
+class SeniorFragment : AbstractFragment() {
+    // Binding with layout:
     private var _binding: SeniorScreenBinding? = null
     private val binding get() = _binding!!
-
-    // Binding Fragment with ViewModel:
-    private lateinit var weatherVM : WeatherVM
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        weatherVM = ViewModelProvider(requireActivity()).get(WeatherVM::class.java)
-    }
-
-    @SuppressLint("SimpleDateFormat", "SetTextI18n")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        // Binding with layout:
         _binding = SeniorScreenBinding.inflate(inflater, container, false)
 
         // Hide everything by default:
@@ -80,7 +64,7 @@ class SeniorFragment : Fragment() {
                     tmp.textSize = 25F
                     tmp.textAlignment = View.TEXT_ALIGNMENT_CENTER
                 }.show()
-                weatherVM.cityExists.value = true
+                weatherVM.setCityExists(true)
             }
         })
 
@@ -145,14 +129,8 @@ class SeniorFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Connect adapters with recycler views:
-        binding.rvHourly.apply {
-            this.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            this.adapter = SeniorHourlyForecastAdapter()
-        }
-        binding.rvDaily.apply {
-            this.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            this.adapter = SeniorDailyForecastAdapter(requireContext())
-        }
+        installAdapter(binding.rvHourly, "hourly")
+        installAdapter(binding.rvDaily, "daily")
 
         // Top Bar Actions (changing dialog fonts based on: https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog):
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
@@ -160,150 +138,48 @@ class SeniorFragment : Fragment() {
 
                 // Find city by name and download it's weather data:
                 R.id.search -> {
-
-                    // Custom view with editText component:
-                    val customLayout = makeLayout(requireContext())
-
-                    // Custom title with bigger font for seniors (based on:
-                    // https://stackoverflow.com/questions/28643277/dialog-box-title-text-size-in-android):
-                    val customTitle = TextView(requireContext())
-                    customTitle.text = resources.getString(R.string.searchCityTitle)
-                    customTitle.textSize = 22F
-                    customTitle.typeface = Typeface.DEFAULT_BOLD
-                    customTitle.textAlignment = View.TEXT_ALIGNMENT_CENTER
-                    customTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                    customTitle.setPadding(40, 60, 40, 20)
-
-                    // Building the dialog:
-                    val builder = MaterialAlertDialogBuilder(requireContext())
-                            .setCustomTitle(customTitle)
-                            .setView(customLayout)
-                            .setNeutralButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
-                            .setPositiveButton(resources.getString(R.string.search)) { _, _ ->
-                                // Check if there is an internet connection:
-                                if (!isConnectedToInternet(requireContext()))
-                                {
-                                    // Senior's snackbars are bigger and are displayed longer:
-                                    Snackbar.make(view, resources.getString(R.string.internetNotFound), Snackbar.LENGTH_LONG).apply {
-                                        val tmp = view.findViewById<TextView>(R.id.snackbar_text)
-                                        tmp.textSize = 25F
-                                        tmp.textAlignment = View.TEXT_ALIGNMENT_CENTER
-                                    }.show()
-                                }
-                                // Update weather
-                                else
-                                {
-                                    val editText = customLayout.findViewWithTag<TextInputEditText>("editTextTag")
-                                    weatherVM.setCurrentWeather(editText.text.toString())
-                                }
-                            }
-                            .show()
-
-                    // Resizing buttons:
-                    builder.getButton(Dialog.BUTTON_POSITIVE).textSize = 20F
-                    builder.getButton(Dialog.BUTTON_NEUTRAL).textSize = 20F
-                    builder.getButton(Dialog.BUTTON_NEUTRAL).setPadding(20,80,0,0)
-
+                    // Show the dialog:
+                    val customLayout = makeEditTextLayout(requireContext(), true)
+                    val editText = customLayout.findViewWithTag<TextInputEditText>("editTextTag")
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setCustomTitle(makeCustomTitle(resources.getString(R.string.searchCityTitle)))
+                        .setView(customLayout)
+                        .setNeutralButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
+                        .setPositiveButton(resources.getString(R.string.search)) { _, _ -> searchAction(view, editText, true) }
+                        .show()
+                        .apply { resizeDialog(this) }
                     true
                 }
 
                 // Find city by current location and download it's weather data:
                 R.id.findWithGPS -> {
-
                     // Try to grant permissions and find city:
                     weatherVM.launchGPS(requireActivity())
 
-                    // Show dialog:
-                    if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                        || ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
-                        // Custom title with bigger font for seniors:
-                        val customTitle = TextView(requireContext())
-                        customTitle.text = resources.getString(R.string.locateTitle)
-                        customTitle.textSize = 22F
-                        customTitle.typeface = Typeface.DEFAULT_BOLD
-                        customTitle.textAlignment = View.TEXT_ALIGNMENT_CENTER
-                        customTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                        customTitle.setPadding(40, 60, 40, 20)
-
-                        // Building the dialog:
-                        val builder = MaterialAlertDialogBuilder(requireContext())
-                                .setCustomTitle(customTitle)
-                                .setMessage(resources.getString(R.string.locateDescription))
-                                .setNeutralButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
-                                .setPositiveButton(resources.getString(R.string.locate)) { _, _ ->
-                                    // Show info about disabled GPS (actually it checks the last location):
-                                    if (weatherVM.currentLocation.value == null)
-                                    {
-                                        // Senior's snackbars are bigger and are displayed longer:
-                                        val snack = Snackbar.make(view, resources.getString(R.string.gpsNotFound), Snackbar.LENGTH_LONG)
-                                        snack.view.findViewById<TextView>(R.id.snackbar_text).textSize = 25F
-                                        snack.view.findViewById<TextView>(R.id.snackbar_text).textAlignment = View.TEXT_ALIGNMENT_CENTER
-                                        snack.show()
-                                    }
-                                    // Check internet connection:
-                                    else if (!isConnectedToInternet(requireContext()))
-                                    {
-                                        // Senior's snackbars are bigger and are displayed longer:
-                                        val snack = Snackbar.make(view, resources.getString(R.string.internetNotFound), Snackbar.LENGTH_LONG)
-                                        snack.view.findViewById<TextView>(R.id.snackbar_text).textSize = 25F
-                                        snack.view.findViewById<TextView>(R.id.snackbar_text).textAlignment = View.TEXT_ALIGNMENT_CENTER
-                                        snack.show()
-                                    }
-                                    // Update weather info:
-                                    else weatherVM.setCurrentWeatherByCoordination(
-                                            weatherVM.currentLocation.value!!.latitude,
-                                            weatherVM.currentLocation.value!!.longitude)
-                                }
-                                .show()
-
-                        // Resizing message and buttons:
-                        val msg = builder.findViewById<TextView>(android.R.id.message)
-                        msg?.textSize = 22F
-                        msg?.textAlignment = View.TEXT_ALIGNMENT_CENTER
-                        builder.getButton(Dialog.BUTTON_POSITIVE).textSize = 20F
-                        builder.getButton(Dialog.BUTTON_NEUTRAL).textSize = 20F
-                        builder.getButton(Dialog.BUTTON_NEUTRAL).setPadding(20,80,0,0)
-
-                        // Changing message color to black (based on:
-                        // https://stackoverflow.com/questions/31590714/getcolorint-id-deprecated-on-android-6-0-marshmallow-api-23):
-                        builder.findViewById<TextView>(android.R.id.message)?.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                    // If there are permissions...
+                    if (checkPermissions()) {
+                        // ... show the dialog:
+                        MaterialAlertDialogBuilder(requireContext())
+                            .setCustomTitle(makeCustomTitle(resources.getString(R.string.locateTitle)))
+                            .setMessage(resources.getString(R.string.locateDescription))
+                            .setNeutralButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
+                            .setPositiveButton(resources.getString(R.string.locate)) { _, _ -> locateAction(view, true) }
+                            .show()
+                            .apply { resizeDialog(this) }
                     }
-
                     true
                 }
 
                 // Change display mode:
                 R.id.elderlyMode -> {
-
-                    // Custom title with bigger font for seniors:
-                    val customTitle = TextView(requireContext())
-                    customTitle.text = resources.getString(R.string.changeDisplayTitle)
-                    customTitle.textSize = 22F
-                    customTitle.typeface = Typeface.DEFAULT_BOLD
-                    customTitle.textAlignment = View.TEXT_ALIGNMENT_CENTER
-                    customTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                    customTitle.setPadding(40, 60, 40, 20)
-
-                    // Building the dialog:
-                    val builder = MaterialAlertDialogBuilder(requireContext())
-                            .setCustomTitle(customTitle)
-                            .setMessage(resources.getString(R.string.changeDisplayDescriptionToStandard))
-                            .setNeutralButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
-                            .setPositiveButton(resources.getString(R.string.change)) { _, _ -> view.findNavController().navigate(R.id.action_seniorFragment_to_mainFragment) }
-                            .show()
-
-                    // Resizing message and buttons:
-                    val msg = builder.findViewById<TextView>(android.R.id.message)
-                    msg?.textSize = 22F
-                    msg?.textAlignment = View.TEXT_ALIGNMENT_CENTER
-                    builder.getButton(Dialog.BUTTON_POSITIVE).textSize = 20F
-                    builder.getButton(Dialog.BUTTON_NEUTRAL).textSize = 20F
-                    builder.getButton(Dialog.BUTTON_NEUTRAL).setPadding(20,80,0,0)
-
-                    // Changing message color to black:
-                    builder.findViewById<TextView>(android.R.id.message)?.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-
+                    // Show the dialog:
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setCustomTitle(makeCustomTitle(resources.getString(R.string.changeDisplayTitle)))
+                        .setMessage(resources.getString(R.string.changeDisplayDescriptionToStandard))
+                        .setNeutralButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
+                        .setPositiveButton(resources.getString(R.string.change)) { _, _ -> changeDisplayAction(view, true) }
+                        .show()
+                        .apply { resizeDialog(this) }
                     true
                 }
 
@@ -312,34 +188,41 @@ class SeniorFragment : Fragment() {
         }
     }
 
-    // Function responsible for adding input field in "searching city" dialog
-    // (based on: https://android--code.blogspot.com/2020/03/android-kotlin-alertdialog-edittext.html):
-    private fun makeLayout(context: Context) : ConstraintLayout {
-        // Prepare height-width parameters for layout and input:
-        val layoutParams = ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.MATCH_PARENT,
-                ConstraintLayout.LayoutParams.WRAP_CONTENT
-        )
-
-        // Prepare layout (editTextInput's parent):
-        val constraintLayout = ConstraintLayout(context)
-        constraintLayout.layoutParams = layoutParams
-
-        // Prepare editTextInput:
-        val editText = TextInputEditText(context)
-        layoutParams.setMargins(40, 0, 40, 0)
-        editText.layoutParams = layoutParams
-        editText.textSize = 40F
-        editText.tag = "editTextTag"
-
-        // Connect them and return:
-        constraintLayout.addView(editText)
-        return constraintLayout
+    // Adding Linear Layout and Adapter to Recycler View:
+    private fun installAdapter(recyclerView: RecyclerView, rvType: String) {
+        recyclerView.apply {
+            this.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            this.adapter =
+                if (rvType == "hourly") SeniorHourlyForecastAdapter()
+                else SeniorDailyForecastAdapter(requireContext())
+        }
     }
 
-    // Checking connection with the internet:
-    private fun isConnectedToInternet(context: Context) : Boolean {
-        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        return cm.activeNetwork != null
+    // Adding custom title with bigger font (based on:
+    // https://stackoverflow.com/questions/28643277/dialog-box-title-text-size-in-android):
+    private fun makeCustomTitle(title: String): TextView {
+        return TextView(requireContext()).apply {
+            text = title
+            textSize = 22F
+            typeface = Typeface.DEFAULT_BOLD
+            textAlignment = View.TEXT_ALIGNMENT_CENTER
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+            setPadding(40, 60, 40, 20)
+        }
+    }
+
+    // Resizing dialog elements (for seniors):
+    private fun resizeDialog(dialog: androidx.appcompat.app.AlertDialog) {
+        // Resizing message and changing its color to black:
+        dialog.findViewById<TextView>(android.R.id.message).apply {
+            this?.textSize = 22F
+            this?.textAlignment = View.TEXT_ALIGNMENT_CENTER
+            this?.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+        }
+
+        // Resizing buttons of the dialog:
+        dialog.getButton(Dialog.BUTTON_POSITIVE).textSize = 20F
+        dialog.getButton(Dialog.BUTTON_NEUTRAL).textSize = 20F
+        dialog.getButton(Dialog.BUTTON_NEUTRAL).setPadding(20,80,0,0)
     }
 }

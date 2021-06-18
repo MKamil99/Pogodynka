@@ -78,6 +78,7 @@
                     <TextClock
                         android:id="@+id/tv_dateAndTime"
                         android:format24Hour="EEEE, dd.MM.yyyy, HH:mm"
+                        android:format12Hour="EEE, dd.MM.yyyy, HH:mm"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAlignment="center"

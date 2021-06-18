@@ -1,27 +1,18 @@
 package com.example.weatherapp.view
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.pm.PackageManager
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.app.ActivityCompat
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.MainScreenBinding
 import com.example.weatherapp.model.responses.CurrentWeatherResponse
-import com.example.weatherapp.viewmodel.MainDailyForecastAdapter
-import com.example.weatherapp.viewmodel.MainHourlyForecastAdapter
-import com.example.weatherapp.viewmodel.WeatherVM
+import com.example.weatherapp.view.adapters.MainDailyForecastAdapter
+import com.example.weatherapp.view.adapters.MainHourlyForecastAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
@@ -29,19 +20,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
-class MainFragment : Fragment() {
+class MainFragment : AbstractFragment() {
+    // Binding with layout:
     private var _binding: MainScreenBinding? = null
     private val binding get() = _binding!!
-
-    // Binding Fragment with ViewModel:
-    private lateinit var weatherVM : WeatherVM
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        weatherVM = ViewModelProvider(requireActivity()).get(WeatherVM::class.java)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        // Binding with layout:
         _binding = MainScreenBinding.inflate(inflater, container, false)
 
         // Hide everything by default:
@@ -73,7 +56,7 @@ class MainFragment : Fragment() {
         weatherVM.cityExists.observe(viewLifecycleOwner, {
             if (!it) {
                 Snackbar.make(binding.root, resources.getString(R.string.cityNotFound), Snackbar.LENGTH_SHORT).show()
-                weatherVM.cityExists.value = true
+                weatherVM.setCityExists(true)
             }
         })
 
@@ -142,69 +125,39 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Connect adapters with recycler views:
-        binding.rvHourly.apply {
-            this.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            this.adapter = MainHourlyForecastAdapter()
-        }
-        binding.rvDaily.apply {
-            this.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            this.adapter = MainDailyForecastAdapter(requireContext())
-        }
+        installAdapter(binding.rvHourly, "hourly")
+        installAdapter(binding.rvDaily, "daily")
 
         // Top Bar Actions:
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
-
                 // Find city by name and download it's weather data:
                 R.id.search -> {
-
-                    // Custom view with editText component:
-                    val customLayout = makeLayout(requireContext())
-
-                    // Building the dialog:
+                    // Show the dialog:
+                    val customLayout = makeEditTextLayout(requireContext(), false)
+                    val editText = customLayout.findViewWithTag<TextInputEditText>("editTextTag")
                     MaterialAlertDialogBuilder(requireContext())
                             .setTitle(resources.getString(R.string.searchCityTitle))
                             .setView(customLayout)
                             .setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
-                            .setPositiveButton(resources.getString(R.string.search)) { _, _ ->
-                                // Check if there is an internet connection:
-                                if (!isConnectedToInternet(requireContext()))
-                                    Snackbar.make(view, resources.getString(R.string.internetNotFound), Snackbar.LENGTH_SHORT).show()
-                                // Update weather
-                                else {
-                                    val editText = customLayout.findViewWithTag<TextInputEditText>("editTextTag")
-                                    weatherVM.setCurrentWeather(editText.text.toString())
-                                }
-                            }
+                            .setPositiveButton(resources.getString(R.string.search)) { _, _ -> searchAction(view, editText, false) }
                             .show()
                     true
                 }
 
                 // Find city by current location and download it's weather data:
                 R.id.findWithGPS -> {
-
                     // Granting permissions / finding the city:
                     weatherVM.launchGPS(requireActivity())
 
-                    // Building the dialog:
-                    if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                        || ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+                    // If there are permissions...
+                    if (checkPermissions())
+                    // ... show the dialog:
                             MaterialAlertDialogBuilder(requireContext())
                             .setTitle(resources.getString(R.string.locateTitle))
                             .setMessage(resources.getString(R.string.locateDescription))
                             .setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
-                            .setPositiveButton(resources.getString(R.string.locate)) { _, _ ->
-                                // Show info about disabled GPS (actually it checks last location):
-                                if (weatherVM.currentLocation.value == null)
-                                    Snackbar.make(view, resources.getString(R.string.gpsNotFound), Snackbar.LENGTH_SHORT).show()
-                                // Check internet connection:
-                                else if (!isConnectedToInternet(requireContext()))
-                                    Snackbar.make(view, resources.getString(R.string.internetNotFound), Snackbar.LENGTH_SHORT).show()
-                                // Update weather info:
-                                else weatherVM.setCurrentWeatherByCoordination(
-                                        weatherVM.currentLocation.value!!.latitude,
-                                        weatherVM.currentLocation.value!!.longitude)
-                            }
+                            .setPositiveButton(resources.getString(R.string.locate)) { _, _ -> locateAction(view, false) }
                             .show()
 
                     true
@@ -212,15 +165,13 @@ class MainFragment : Fragment() {
 
                 // Change display mode:
                 R.id.elderlyMode -> {
-
-                    // Building the dialog:
+                    // Show the dialog:
                     MaterialAlertDialogBuilder(requireContext())
                             .setTitle(resources.getString(R.string.changeDisplayTitle))
                             .setMessage(resources.getString(R.string.changeDisplayDescriptionToSenior))
                             .setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
-                            .setPositiveButton(resources.getString(R.string.change)) { _, _ -> view.findNavController().navigate(R.id.action_mainFragment_to_seniorFragment) }
+                            .setPositiveButton(resources.getString(R.string.change)) { _, _ -> changeDisplayAction(view, false) }
                             .show()
-
                     true
                 }
 
@@ -229,33 +180,13 @@ class MainFragment : Fragment() {
         }
     }
 
-    // Function responsible for adding input field in "searching city" dialog
-    // (based on: https://android--code.blogspot.com/2020/03/android-kotlin-alertdialog-edittext.html):
-    private fun makeLayout(context: Context) : ConstraintLayout {
-        // Prepare height-width parameters for layout and input:
-        val layoutParams = ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.MATCH_PARENT,
-                ConstraintLayout.LayoutParams.WRAP_CONTENT
-        )
-
-        // Prepare layout (editTextInput's parent):
-        val constraintLayout = ConstraintLayout(context)
-        constraintLayout.layoutParams = layoutParams
-
-        // Prepare editTextInput:
-        val editText = TextInputEditText(context)
-        layoutParams.setMargins(40, 0, 40, 0)
-        editText.layoutParams = layoutParams
-        editText.tag = "editTextTag"
-
-        // Connect them and return:
-        constraintLayout.addView(editText)
-        return constraintLayout
-    }
-
-    // Checking connection with the internet:
-    private fun isConnectedToInternet(context: Context) : Boolean {
-        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        return cm.activeNetwork != null
+    // Adding Linear Layout and Adapter to Recycler View:
+    private fun installAdapter(recyclerView: RecyclerView, rvType: String) {
+        recyclerView.apply {
+            this.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            this.adapter =
+                if (rvType == "hourly") MainHourlyForecastAdapter()
+                else MainDailyForecastAdapter(requireContext())
+        }
     }
 }

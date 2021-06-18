@@ -1,4 +1,4 @@
-package com.example.weatherapp.viewmodel
+package com.example.weatherapp.view.adapters
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -16,7 +16,7 @@ class SeniorHourlyForecastAdapter : RecyclerView.Adapter<SeniorHourlyForecastAda
         val view = TileBigBinding.inflate(LayoutInflater.from(parent.context))
         return ViewHolder(view)
     }
-    override fun onBindViewHolder(holder: SeniorHourlyForecastAdapter.ViewHolder, position: Int) = holder.bind(specificHourForecasts[position])
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(specificHourForecasts[position])
     override fun getItemCount(): Int = specificHourForecasts.size
 
     inner class ViewHolder(private val binding: TileBigBinding): RecyclerView.ViewHolder(binding.root) {

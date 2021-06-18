@@ -1,11 +1,6 @@
 package com.example.weatherapp.viewmodel
 
-import android.Manifest
-import android.app.Activity
-import android.content.pm.PackageManager
-import android.location.Location
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,69 +9,54 @@ import com.example.weatherapp.model.SpecificHourForecast
 import com.example.weatherapp.model.api.ApiRequest
 import com.example.weatherapp.model.api.WeatherRepository
 import com.example.weatherapp.model.responses.CurrentWeatherResponse
-import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.launch
 import retrofit2.awaitResponse
+import java.util.*
 
-// ViewModel used in this application for connecting views with models:
-class WeatherVM : ViewModel() {
+// ViewModel which contains data about weather:
+abstract class WeatherVM : ViewModel() {
     private val repository : WeatherRepository = WeatherRepository(ApiRequest.getAPI())
+    private val language = if (Locale.getDefault().displayLanguage == "polski") "pl" else "en"
 
     // Current weather:
-    var currentWeather = MutableLiveData<CurrentWeatherResponse>()
-    var cityExists = MutableLiveData<Boolean>()
+    private val mutCurrentWeather = MutableLiveData<CurrentWeatherResponse>()
+    val currentWeather : LiveData<CurrentWeatherResponse> get() = mutCurrentWeather
     fun setCurrentWeather(cityName : String) {
         viewModelScope.launch {
-            val response = repository.getCurrentWeather(cityName).awaitResponse()
-            cityExists.value = response.isSuccessful
-            if (response.isSuccessful) {
-                val data = response.body()!!
-                currentWeather.value = data
+            val response = repository.getCurrentWeather(cityName, language).awaitResponse()
+            mutCityExists.value = response.isSuccessful
+            if (response.isSuccessful && response.body() != null) mutCurrentWeather.value = response.body()
+        }
+    }
+    fun setCurrentWeatherByCoordination(latitude : Double?, longitude : Double?) {
+        if (latitude != null && longitude != null) {
+            viewModelScope.launch {
+                val response = repository.getCurrentWeatherByCoordination(latitude, longitude, language).awaitResponse()
+                mutCityExists.value = response.isSuccessful
+                if (response.isSuccessful && response.body() != null) mutCurrentWeather.value = response.body()
             }
         }
     }
-    fun setCurrentWeatherByCoordination(latitude : Double, longitude : Double) {
-        viewModelScope.launch {
-            val response = repository.getCurrentWeatherByCoordination(latitude, longitude).awaitResponse()
-            cityExists.value = response.isSuccessful
-            if (response.isSuccessful) {
-                val data = response.body()!!
-                currentWeather.value = data
-            }
-        }
+
+    // Boolean which informs if city with given name exists or not:
+    private val mutCityExists = MutableLiveData<Boolean>()
+    val cityExists : LiveData<Boolean> get() = mutCityExists
+    fun setCityExists(value : Boolean) {
+        mutCityExists.value = value
     }
 
     // Forecasts (hourly for 24 hours and daily for 7 days):
-    var currentHourlyForecast = MutableLiveData<List<SpecificHourForecast>>()
-    var currentDailyForecast = MutableLiveData<List<SpecificDayForecast>>()
+    private val mutCurrentHourlyForecast = MutableLiveData<List<SpecificHourForecast>>()
+    private val mutCurrentDailyForecast = MutableLiveData<List<SpecificDayForecast>>()
+    val currentHourlyForecast : LiveData<List<SpecificHourForecast>> get() = mutCurrentHourlyForecast
+    val currentDailyForecast : LiveData<List<SpecificDayForecast>> get() = mutCurrentDailyForecast
     fun setForecasts(latitude : Double, longitude : Double) {
         viewModelScope.launch {
-            val response = repository.getForecasts(latitude, longitude).awaitResponse()
+            val response = repository.getForecasts(latitude, longitude, language).awaitResponse()
             if (response.isSuccessful) {
-                val data = response.body()!!
-                currentHourlyForecast.value = data.hourly.subList(1, 25)
-                currentDailyForecast.value = data.daily.subList(0, 7)
-            }
-        }
-    }
-
-    // Current location:
-    var currentLocation = MutableLiveData<Location>()
-    fun launchGPS(activity: Activity, searchNow : Boolean = false) {
-        // Request permissions to use GPS: https://www.tutorialspoint.com/how-to-get-the-current-gps-location-programmatically-on-android-using-kotlin
-        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if ((ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-                ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 2) }
-            return
-        }
-
-        // Update location:
-        LocationServices.getFusedLocationProviderClient(activity).lastLocation.addOnSuccessListener { location: Location? ->
-            if (location != null) {
-                currentLocation.value = location
-                // Get current location's current weather if app has just been launched:
-                if (searchNow) setCurrentWeatherByCoordination(currentLocation.value!!.latitude, currentLocation.value!!.longitude)
+                val data = response.body()
+                mutCurrentHourlyForecast.value = data?.hourly?.subList(1, 25)
+                mutCurrentDailyForecast.value = data?.daily?.subList(0, 7)
             }
         }
     }
