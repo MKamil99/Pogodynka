@@ -1,4 +1,4 @@
-package com.example.pogodynka.view
+package com.example.weatherapp.view
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,106 +19,67 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.pogodynka.R
-import com.example.pogodynka.viewmodel.DailyForecastAdapter
-import com.example.pogodynka.viewmodel.HourlyForecastAdapter
-import com.example.pogodynka.viewmodel.WeatherVM
+import com.example.weatherapp.R
+import com.example.weatherapp.databinding.SeniorScreenBinding
+import com.example.weatherapp.model.responses.CurrentWeatherResponse
+import com.example.weatherapp.viewmodel.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
-import kotlinx.android.synthetic.main.main_screen.*
-import kotlinx.android.synthetic.main.main_screen.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
 class SeniorFragment : Fragment() {
-    // ViewModel:
+    private var _binding: SeniorScreenBinding? = null
+    private val binding get() = _binding!!
+
+    // Binding Fragment with ViewModel:
     private lateinit var weatherVM : WeatherVM
-
-    // Hourly Forecast:
-    private lateinit var hourlyForecastAdapter : HourlyForecastAdapter
-    private lateinit var hourlyForecastLayoutManager : LinearLayoutManager
-    private lateinit var hourlyForecastRecyclerView : RecyclerView
-
-    // Daily Forecast:
-    private lateinit var dailyForecastAdapter : DailyForecastAdapter
-    private lateinit var dailyForecastLayoutManager : LinearLayoutManager
-    private lateinit var dailyForecastRecyclerView : RecyclerView
-
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        weatherVM = ViewModelProvider(requireActivity()).get(WeatherVM::class.java)
+    }
 
     @SuppressLint("SimpleDateFormat", "SetTextI18n")
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        weatherVM = ViewModelProvider(requireActivity()).get(WeatherVM::class.java)
-        hourlyForecastLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        hourlyForecastAdapter = HourlyForecastAdapter(weatherVM.currentHourlyForecast, "Senior")
-        dailyForecastLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        dailyForecastAdapter = DailyForecastAdapter(weatherVM.currentDailyForecast, "Senior", requireContext())
-        val view =  inflater.inflate(R.layout.senior_screen, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        // Binding with layout:
+        _binding = SeniorScreenBinding.inflate(inflater, container, false)
 
         // Hide everything by default:
-        view.card_current.visibility = View.GONE
-        view.tv_hourly.visibility = View.GONE
-        view.card_hourly.visibility = View.GONE
-        view.tv_details.visibility = View.GONE
-        view.card_details.visibility = View.GONE
-        view.tv_daily.visibility = View.GONE
-        view.card_daily.visibility = View.GONE
-        view.placeholder.visibility = View.VISIBLE
-        view.placeholder2.visibility = View.VISIBLE
+        displayPlaceholder()
 
         // Displaying current weather:
-        weatherVM.currentWeather.observe(viewLifecycleOwner, {
-            // Main:
-            view.tv_city.text = it.name
-            view.tv_currentTemperature.text = "${it.main.temp.roundToInt()}°C"
-            view.tv_feelsLike.text = "Odczuwalne: ${it.main.feels_like.roundToInt()}°C"
-            view.tv_description.text = it.weather[0].description.capitalize(Locale.ROOT)
-
-            // Icon:
-            val url = "https://openweathermap.org/img/wn/${it.weather[0].icon}@4x.png"
-            Glide.with(view.iv_currentWeatherIcon).load(url).centerCrop().into(view.iv_currentWeatherIcon)
-
-            // Details:
-            view.tv_pressureValue.text = "${it.main.pressure} hPa"
-            view.tv_sunriseValue.text = SimpleDateFormat("HH:mm").format(Date(it.sys.sunrise * 1000))
-            view.tv_sunsetValue.text = SimpleDateFormat("HH:mm").format(Date(it.sys.sunset * 1000))
-
-            // Update forecasts:
-            weatherVM.setForecasts(it.coord.lat, it.coord.lon)
-
-            // Display it:
-            view.placeholder.visibility = View.GONE
-            view.placeholder2.visibility = View.GONE
-            view.card_current.visibility = View.VISIBLE
-            view.tv_details.visibility = View.VISIBLE
-            view.card_details.visibility = View.VISIBLE
+        weatherVM.currentWeather.observe(viewLifecycleOwner, { currentWeather ->
+            setMainInfo(currentWeather)
+            setDetails(currentWeather)
+            hidePlaceholder()
+            weatherVM.setForecasts(currentWeather.coord.lat, currentWeather.coord.lon)
         })
 
         // Displaying hourly forecast for next 24 hours:
         weatherVM.currentHourlyForecast.observe(viewLifecycleOwner, {
-            hourlyForecastAdapter.notifyDataSetChanged()
-            view.tv_hourly.visibility = View.VISIBLE
-            view.card_hourly.visibility = View.VISIBLE
+            (binding.rvHourly.adapter as SeniorHourlyForecastAdapter).setData(it)
+            binding.tvHourly.visibility = View.VISIBLE
+            binding.cardHourly.visibility = View.VISIBLE
         })
 
         // Displaying daily forecast for next 7 weeks:
         weatherVM.currentDailyForecast.observe(viewLifecycleOwner, {
-            dailyForecastAdapter.notifyDataSetChanged()
-            view.tv_daily.visibility = View.VISIBLE
-            view.card_daily.visibility = View.VISIBLE
+            (binding.rvDaily.adapter as SeniorDailyForecastAdapter).setData(it)
+            binding.tvDaily.visibility = View.VISIBLE
+            binding.cardDaily.visibility = View.VISIBLE
         })
 
         // Displaying info about wrong city:
         weatherVM.cityExists.observe(viewLifecycleOwner, {
-            if (!it)
-            {
-                val snack = Snackbar.make(view, resources.getString(R.string.cityNotFound), Snackbar.LENGTH_LONG)
-                snack.view.findViewById<TextView>(R.id.snackbar_text).textSize = 25F
-                snack.view.findViewById<TextView>(R.id.snackbar_text).textAlignment = View.TEXT_ALIGNMENT_CENTER
-                snack.show()
+            if (!it) {
+                Snackbar.make(binding.root, resources.getString(R.string.cityNotFound), Snackbar.LENGTH_LONG).apply {
+                    val tmp = view.findViewById<TextView>(R.id.snackbar_text)
+                    tmp.textSize = 25F
+                    tmp.textAlignment = View.TEXT_ALIGNMENT_CENTER
+                }.show()
                 weatherVM.cityExists.value = true
             }
         })
@@ -127,25 +87,75 @@ class SeniorFragment : Fragment() {
         // Check location:
         weatherVM.launchGPS(requireActivity(), weatherVM.currentWeather.value == null && isConnectedToInternet(requireActivity()))
 
-        return view
+        return binding.root
     }
 
+    // Unbinding from layout:
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
+    // Displaying main info:
+    @SuppressLint("SetTextI18n")
+    private fun setMainInfo(currentWeather : CurrentWeatherResponse) {
+        // City name, real/felt temperature and description:
+        binding.tvCity.text = currentWeather.name
+        binding.tvCurrentTemperature.text = "${currentWeather.main.temp.roundToInt()}°C"
+        binding.tvFeelsLike.text = "${getString(R.string.feels_like)} ${currentWeather.main.feels_like.roundToInt()}°C"
+        binding.tvDescription.text = currentWeather.weather[0].description.replaceFirstChar { char -> char.uppercase() }
+
+        // Icon:
+        val url = "https://openweathermap.org/img/wn/${currentWeather.weather[0].icon}@4x.png"
+        Glide.with(binding.root).load(url).centerCrop().into(binding.ivCurrentWeatherIcon)
+    }
+
+    // Displaying details:
+    @SuppressLint("SetTextI18n", "SimpleDateFormat")
+    private fun setDetails(currentWeather: CurrentWeatherResponse) {
+        binding.tvPressureValue.text = "${currentWeather.main.pressure} hPa"
+        binding.tvSunriseValue.text = SimpleDateFormat("HH:mm").format(Date(currentWeather.sys.sunrise * 1000))
+        binding.tvSunsetValue.text = SimpleDateFormat("HH:mm").format(Date(currentWeather.sys.sunset * 1000))
+    }
+
+    // Displaying proper view - placeholder:
+    private fun displayPlaceholder() {
+        binding.cardCurrent.visibility = View.GONE
+        binding.tvHourly.visibility = View.GONE
+        binding.cardHourly.visibility = View.GONE
+        binding.tvDetails.visibility = View.GONE
+        binding.cardDetails.visibility = View.GONE
+        binding.tvDaily.visibility = View.GONE
+        binding.cardDaily.visibility = View.GONE
+        binding.placeholder.visibility = View.VISIBLE
+        binding.placeholder2.visibility = View.VISIBLE
+    }
+
+    // Displaying proper view - main info:
+    private fun hidePlaceholder() {
+        binding.placeholder.visibility = View.GONE
+        binding.placeholder2.visibility = View.GONE
+        binding.cardCurrent.visibility = View.VISIBLE
+        binding.tvDetails.visibility = View.VISIBLE
+        binding.cardDetails.visibility = View.VISIBLE
+    }
+
+    // Installing RecyclerViews and Buttons:
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         // Connect adapters with recycler views:
-        hourlyForecastRecyclerView = rv_hourly.apply {
-            this.layoutManager = hourlyForecastLayoutManager
-            this.adapter = hourlyForecastAdapter
+        binding.rvHourly.apply {
+            this.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            this.adapter = SeniorHourlyForecastAdapter()
         }
-        dailyForecastRecyclerView = rv_daily.apply {
-            this.layoutManager = dailyForecastLayoutManager
-            this.adapter = dailyForecastAdapter
+        binding.rvDaily.apply {
+            this.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            this.adapter = SeniorDailyForecastAdapter(requireContext())
         }
 
         // Top Bar Actions (changing dialog fonts based on: https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog):
-        topAppBar.setOnMenuItemClickListener { menuItem ->
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
 
                 // Find city by name and download it's weather data:
@@ -174,11 +184,11 @@ class SeniorFragment : Fragment() {
                                 if (!isConnectedToInternet(requireContext()))
                                 {
                                     // Senior's snackbars are bigger and are displayed longer:
-                                    val snack = Snackbar.make(view, resources.getString(R.string.internetNotFound), Snackbar.LENGTH_LONG)
-                                    snack.view.findViewById<TextView>(R.id.snackbar_text).textSize = 25F
-                                    snack.view.findViewById<TextView>(R.id.snackbar_text).textAlignment = View.TEXT_ALIGNMENT_CENTER
-                                    snack.show()
-
+                                    Snackbar.make(view, resources.getString(R.string.internetNotFound), Snackbar.LENGTH_LONG).apply {
+                                        val tmp = view.findViewById<TextView>(R.id.snackbar_text)
+                                        tmp.textSize = 25F
+                                        tmp.textAlignment = View.TEXT_ALIGNMENT_CENTER
+                                    }.show()
                                 }
                                 // Update weather
                                 else
@@ -248,8 +258,9 @@ class SeniorFragment : Fragment() {
                                 .show()
 
                         // Resizing message and buttons:
-                        builder.findViewById<TextView>(android.R.id.message)?.textSize = 22F
-                        builder.findViewById<TextView>(android.R.id.message)?.textAlignment = View.TEXT_ALIGNMENT_CENTER
+                        val msg = builder.findViewById<TextView>(android.R.id.message)
+                        msg?.textSize = 22F
+                        msg?.textAlignment = View.TEXT_ALIGNMENT_CENTER
                         builder.getButton(Dialog.BUTTON_POSITIVE).textSize = 20F
                         builder.getButton(Dialog.BUTTON_NEUTRAL).textSize = 20F
                         builder.getButton(Dialog.BUTTON_NEUTRAL).setPadding(20,80,0,0)
@@ -283,8 +294,9 @@ class SeniorFragment : Fragment() {
                             .show()
 
                     // Resizing message and buttons:
-                    builder.findViewById<TextView>(android.R.id.message)?.textSize = 22F
-                    builder.findViewById<TextView>(android.R.id.message)?.textAlignment = View.TEXT_ALIGNMENT_CENTER
+                    val msg = builder.findViewById<TextView>(android.R.id.message)
+                    msg?.textSize = 22F
+                    msg?.textAlignment = View.TEXT_ALIGNMENT_CENTER
                     builder.getButton(Dialog.BUTTON_POSITIVE).textSize = 20F
                     builder.getButton(Dialog.BUTTON_NEUTRAL).textSize = 20F
                     builder.getButton(Dialog.BUTTON_NEUTRAL).setPadding(20,80,0,0)
@@ -299,8 +311,6 @@ class SeniorFragment : Fragment() {
             }
         }
     }
-
-
 
     // Function responsible for adding input field in "searching city" dialog
     // (based on: https://android--code.blogspot.com/2020/03/android-kotlin-alertdialog-edittext.html):
@@ -327,11 +337,9 @@ class SeniorFragment : Fragment() {
         return constraintLayout
     }
 
-
-    // Checking connection with the internet (based on: https://developer.android.com/training/monitoring-device-state/connectivity-status-type):
+    // Checking connection with the internet:
     private fun isConnectedToInternet(context: Context) : Boolean {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
-        return activeNetwork?.isConnectedOrConnecting == true
+        return cm.activeNetwork != null
     }
 }

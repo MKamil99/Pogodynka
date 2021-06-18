@@ -1,4 +1,4 @@
-package com.example.pogodynka.model
+package com.example.weatherapp.model
 
 data class Details (
     val feels_like : Double,

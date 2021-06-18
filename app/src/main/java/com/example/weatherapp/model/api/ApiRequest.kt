@@ -1,10 +1,10 @@
-package com.example.pogodynka.model.api
+package com.example.weatherapp.model.api
 
-import com.example.pogodynka.model.responses.CurrentWeatherResponse
-import com.example.pogodynka.model.responses.OneCallResponse
+import com.example.weatherapp.model.responses.CurrentWeatherResponse
+import com.example.weatherapp.model.responses.OneCallResponse
 import retrofit2.Call
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -28,14 +28,14 @@ interface ApiRequest {
 
         fun getAPI() : ApiRequest {
             val tempInstance = INSTANCE
-            if (tempInstance != null)
-                return tempInstance
+            return if (tempInstance != null)
+                tempInstance
             else {
-                val comm = Retrofit.Builder()
-                    .baseUrl(WEBSITE).addConverterFactory(GsonConverterFactory.create())
+                val comm = Retrofit.Builder().baseUrl(WEBSITE)
+                    .addConverterFactory(MoshiConverterFactory.create())
                     .build().create(ApiRequest::class.java)
                 INSTANCE = comm
-                return comm
+                comm
             }
         }
     }

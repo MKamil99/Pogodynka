@@ -1,7 +1,7 @@
-package com.example.pogodynka.model.api
+package com.example.weatherapp.model.api
 
-import com.example.pogodynka.model.responses.CurrentWeatherResponse
-import com.example.pogodynka.model.responses.OneCallResponse
+import com.example.weatherapp.model.responses.CurrentWeatherResponse
+import com.example.weatherapp.model.responses.OneCallResponse
 import retrofit2.Call
 
 class WeatherRepository(private val apiRequest: ApiRequest) {

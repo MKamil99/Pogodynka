@@ -17,7 +17,8 @@
     <ImageView
         android:id="@+id/iv_weatherIcon"
         android:layout_width="80dp"
-        android:layout_height="100dp"/>
+        android:layout_height="100dp"
+        android:contentDescription="@string/content_description_weatherIcon" />
 
     <TextView
         android:id="@+id/tv_temperature"

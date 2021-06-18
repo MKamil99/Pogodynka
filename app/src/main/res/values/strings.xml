@@ -1,47 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Pogodynka</string>
+    <string name="app_name">WeatherApp</string>
 
     <!-- Buttons -->
-    <string name="content_description_search">Wyszukaj inne miasto</string>
-    <string name="content_description_findWithGPS">Znajdź przy użyciu modułu GPS</string>
-    <string name="content_description_changeModeToSeniorMode">Zmień tryb wyświetlania na Tryb Seniora</string>
-    <string name="content_description_changeModeToStandardMode">Zmień tryb wyświetlania na Tryb Standardowy</string>
+    <string name="content_description_search">Search for another city</string>
+    <string name="content_description_findWithGPS">Find weather with GPS signal</string>
+    <string name="content_description_changeModeToSeniorMode">Change display mode to Senior Mode</string>
+    <string name="content_description_changeModeToStandardMode">Change display mode to Standard Mode</string>
+
+    <!-- Images -->
+    <string name="content_description_weatherIcon">Symbol of current weather</string>
+    <string name="content_description_pressureIcon">Symbol of air pressure</string>
+    <string name="content_description_humidityIcon">Symbol of air humidity</string>
+    <string name="content_description_sunriseIcon">Symbol of sunrise</string>
+    <string name="content_description_sunsetIcon">Symbol of sunset</string>
 
     <!-- Section Titles -->
-    <string name="hour_forecast_title">PROGNOZA GODZINOWA</string>
-    <string name="details_title">SZCZEGÓŁY</string>
-    <string name="daily_forecast_title">PROGNOZA 7-DNIOWA</string>
+    <string name="hour_forecast_title">HOURLY FORECAST</string>
+    <string name="details_title">DETAILS</string>
+    <string name="daily_forecast_title">7-DAY FORECAST</string>
 
     <!-- Details -->
-    <string name="pressure">Ciśnienie atmosferyczne</string>
-    <string name="humidity">Wilgotność powietrza</string>
-    <string name="sunrise">Wschód Słońca</string>
-    <string name="sunset">Zachód Słońca</string>
+    <string name="pressure">Atmospheric pressure</string>
+    <string name="humidity">Air humidity</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
 
     <!-- Dialogs -->
-    <string name="searchCityTitle">Wprowadź nazwę miasta:</string>
-    <string name="locateTitle">Pobrać bieżącą lokalizację?</string>
-    <string name="locateDescription">Pobrana zostanie prognoza pogody dla lokalizacji, w której się znajdujesz.</string>
-    <string name="changeDisplayTitle">Zmienić tryb?</string>
-    <string name="changeDisplayDescriptionToSenior">Zmiana trybu wyświetlania na Tryb Seniora zapewni lepszą widoczność elementów.</string>
-    <string name="changeDisplayDescriptionToStandard">Zmiana trybu wyświetlania na Tryb Standardowy zapewni większą ilość elementów na ekranie, ale znacząco zmniejszy czcionkę.</string>
+    <string name="searchCityTitle">Enter city name:</string>
+    <string name="locateTitle">Get weather from current location?</string>
+    <string name="locateDescription">System will download weather forecast for the location you are in.</string>
+    <string name="changeDisplayTitle">Change display mode?</string>
+    <string name="changeDisplayDescriptionToSenior">Changing the display mode to Senior Mode will ensure better visibility of the elements.</string>
+    <string name="changeDisplayDescriptionToStandard">Changing the display mode to Standard Mode will provide displaying more elements, but will significantly reduce the font size.</string>
 
     <!-- Dialog buttons -->
-    <string name="cancel">Anuluj</string>
-    <string name="change">Zmień</string>
-    <string name="search">Szukaj</string>
-    <string name="locate">Pobierz</string>
+    <string name="cancel">Cancel</string>
+    <string name="change">Change</string>
+    <string name="search">Search</string>
+    <string name="locate">Locate</string>
 
     <!-- Errors -->
-    <string name="cityNotFound">Nie znaleziono miasta o podanej nazwie.</string>
-    <string name="gpsNotFound">Nie znaleziono sygnału GPS.</string>
-    <string name="internetNotFound">Nie znaleziono połączenia z internetem.</string>
+    <string name="cityNotFound">City with the given name not found.</string>
+    <string name="gpsNotFound">GPS signal not found.</string>
+    <string name="internetNotFound">Internet connection not found.</string>
 
     <!-- Start view -->
-    <string name="placeholderValue">BRAK DANYCH</string>
-    <string name="placeholderValue2">Wprowadź nazwę miasta lub pobierz dane z lokalizacji.</string>
+    <string name="placeholderValue">NO DATA</string>
+    <string name="placeholderValue2">Enter city name or get data from GPS.</string>
 
     <!-- Other strings -->
-    <string name="footer">Aplikacja korzysta z danych udostępnianych przez serwis OpenWeatherMap</string>
-    <string name="today">dzisiaj</string>
+    <string name="footer">Application uses data from OpenWeatherMap</string>
+    <string name="today">Today</string>
+    <string name="feels_like">Feels like:</string>
 </resources>

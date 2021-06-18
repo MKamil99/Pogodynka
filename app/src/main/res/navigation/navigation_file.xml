@@ -5,7 +5,7 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.example.pogodynka.view.MainFragment"
+        android:name="com.example.weatherapp.view.MainFragment"
         android:label="MainFragment" >
         <action
             android:id="@+id/action_mainFragment_to_seniorFragment"
@@ -13,7 +13,7 @@
     </fragment>
     <fragment
         android:id="@+id/seniorFragment"
-        android:name="com.example.pogodynka.view.SeniorFragment"
+        android:name="com.example.weatherapp.view.SeniorFragment"
         android:label="SeniorFragment" >
         <action
             android:id="@+id/action_seniorFragment_to_mainFragment"

@@ -95,7 +95,8 @@
                         app:layout_constraintEnd_toStartOf="@+id/tv_currentTemperature"
                         app:layout_constraintHorizontal_chainStyle="packed"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_dateAndTime" />
+                        app:layout_constraintTop_toBottomOf="@+id/tv_dateAndTime"
+                        android:contentDescription="@string/content_description_weatherIcon"/>
 
                     <TextView
                         android:id="@+id/tv_currentTemperature"
@@ -234,7 +235,8 @@
                             android:scaleType="center"
                             android:scaleX="-1"
                             app:srcCompat="@drawable/ic_pressure_48dp"
-                            tools:ignore="RtlSymmetry" />
+                            tools:ignore="RtlSymmetry"
+                            android:contentDescription="@string/content_description_pressureIcon" />
 
                         <TextView
                             android:id="@+id/tv_pressure"
@@ -271,7 +273,8 @@
                             android:layout_height="wrap_content"
                             android:paddingEnd="15dp"
                             app:srcCompat="@drawable/ic_sunrise_48dp"
-                            tools:ignore="RtlSymmetry" />
+                            tools:ignore="RtlSymmetry"
+                            android:contentDescription="@string/content_description_sunriseIcon" />
 
                         <TextView
                             android:id="@+id/tv_sunrise"
@@ -306,7 +309,8 @@
                             android:layout_height="wrap_content"
                             android:paddingEnd="15dp"
                             app:srcCompat="@drawable/ic_sunset_48dp"
-                            tools:ignore="RtlSymmetry" />
+                            tools:ignore="RtlSymmetry"
+                            android:contentDescription="@string/content_description_sunsetIcon" />
 
                         <TextView
                             android:id="@+id/tv_sunset"

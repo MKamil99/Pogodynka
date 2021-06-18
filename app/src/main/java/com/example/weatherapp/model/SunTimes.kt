@@ -1,4 +1,4 @@
-package com.example.pogodynka.model
+package com.example.weatherapp.model
 
 data class SunTimes (
     val sunrise : Long,
