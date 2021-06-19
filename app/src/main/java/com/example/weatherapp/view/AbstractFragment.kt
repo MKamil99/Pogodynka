@@ -13,17 +13,17 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.weatherapp.R
-import com.example.weatherapp.viewmodel.LocationWithWeatherVM
+import com.example.weatherapp.viewmodel.WeatherVM
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 
 // Fragment for methods that are the same in both Main Fragment and Senior Fragment (without binding):
 abstract class AbstractFragment : Fragment() {
     // Binding Fragment with ViewModel:
-    protected lateinit var weatherVM : LocationWithWeatherVM
+    protected lateinit var weatherVM : WeatherVM
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        weatherVM = ViewModelProvider(requireActivity()).get(LocationWithWeatherVM::class.java)
+        weatherVM = ViewModelProvider(requireActivity()).get(WeatherVM::class.java)
     }
 
 
@@ -75,7 +75,7 @@ abstract class AbstractFragment : Fragment() {
         if (!isConnectedToInternet(requireContext()))
             makeSnackbar(view, resources.getString(R.string.internetNotFound), isSeniorMode)
         // Update weather:
-        else weatherVM.setCurrentWeather(editText.text.toString())
+        else weatherVM.setCurrentWeatherByName(editText.text.toString())
     }
 
     // Result of clicking Locate in Localization Dialog:

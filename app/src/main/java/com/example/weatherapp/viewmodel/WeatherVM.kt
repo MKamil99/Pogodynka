@@ -1,9 +1,7 @@
 package com.example.weatherapp.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.app.Application
+import androidx.lifecycle.*
 import com.example.weatherapp.model.SpecificDayForecast
 import com.example.weatherapp.model.SpecificHourForecast
 import com.example.weatherapp.model.api.ApiRequest
@@ -14,19 +12,27 @@ import retrofit2.awaitResponse
 import java.util.*
 
 // ViewModel which contains data about weather:
-abstract class WeatherVM : ViewModel() {
+class WeatherVM(application: Application) : DatabaseVM(application) {
     private val repository : WeatherRepository = WeatherRepository(ApiRequest.getAPI())
     private val language = if (Locale.getDefault().displayLanguage == "polski") "pl" else "en"
 
     // Current weather:
     private val mutCurrentWeather = MutableLiveData<CurrentWeatherResponse>()
     val currentWeather : LiveData<CurrentWeatherResponse> get() = mutCurrentWeather
-    fun setCurrentWeather(cityName : String?) {
+    fun setCurrentWeatherByName(cityName : String?) {
         if (!cityName.isNullOrEmpty()) {
             viewModelScope.launch {
                 val response = repository.getCurrentWeather(cityName, language).awaitResponse()
                 mutCityExists.value = response.isSuccessful
-                if (response.isSuccessful && response.body() != null) mutCurrentWeather.value = response.body()
+
+                val data = response.body()
+                if (response.isSuccessful && data != null) {
+                    // Save data for displaying:
+                    mutCurrentWeather.value = data
+
+                    // Save data for further sessions:
+                    saveWeatherInfo(data)
+                }
             }
         }
     }
@@ -35,7 +41,15 @@ abstract class WeatherVM : ViewModel() {
             viewModelScope.launch {
                 val response = repository.getCurrentWeatherByCoordination(latitude, longitude, language).awaitResponse()
                 mutCityExists.value = response.isSuccessful
-                if (response.isSuccessful && response.body() != null) mutCurrentWeather.value = response.body()
+
+                val data = response.body()
+                if (response.isSuccessful && data != null) {
+                    // Save data for displaying:
+                    mutCurrentWeather.value = data
+
+                    // Save data for further sessions:
+                    saveWeatherInfo(data)
+                }
             }
         }
     }
@@ -56,10 +70,15 @@ abstract class WeatherVM : ViewModel() {
         if (latitude != null && longitude != null) {
             viewModelScope.launch {
                 val response = repository.getForecasts(latitude, longitude, language).awaitResponse()
-                if (response.isSuccessful) {
-                    val data = response.body()
-                    mutCurrentHourlyForecast.value = data?.hourly?.subList(1, 25)
-                    mutCurrentDailyForecast.value = data?.daily?.subList(0, 7)
+
+                val data = response.body()
+                if (response.isSuccessful && data != null) {
+                    // Save data for displaying:
+                    mutCurrentHourlyForecast.value = data.hourly.subList(1, 25)
+                    mutCurrentDailyForecast.value = data.daily.subList(0, 7)
+
+                    // Save data for further sessions:
+                    saveForecasts(data)
                 }
             }
         }

@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.weatherapp.databinding.ActivityMainBinding
-import com.example.weatherapp.viewmodel.LocationWithWeatherVM
+import com.example.weatherapp.viewmodel.LocationVM
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -20,8 +20,7 @@ class MainActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 2 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            val weatherVM = ViewModelProvider(this).get(LocationWithWeatherVM::class.java)
-            weatherVM.launchGPS(this)
+            ViewModelProvider(this).get(LocationVM::class.java).launchGPS(this)
         }
     }
 }
