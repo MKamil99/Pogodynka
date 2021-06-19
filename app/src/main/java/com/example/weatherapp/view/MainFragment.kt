@@ -63,7 +63,7 @@ class MainFragment : AbstractFragment() {
         })
 
         // Check location:
-        weatherVM.launchGPS(requireActivity(), weatherVM.currentWeather.value == null && isConnectedToInternet(requireActivity()))
+        weatherVM.launchGPS(requireActivity())
 
         return binding.root
     }
@@ -84,8 +84,8 @@ class MainFragment : AbstractFragment() {
         binding.tvDescription.text = currentWeather.weather[0].description.replaceFirstChar { char -> char.uppercase() }
 
         // Icon:
-        val url = "https://openweathermap.org/img/wn/${currentWeather.weather[0].icon}@4x.png"
-        Glide.with(binding.root).load(url).centerCrop().into(binding.ivCurrentWeatherIcon)
+        val icon = getIcon(currentWeather.weather[0].icon)
+        Glide.with(binding.root).load(icon).centerCrop().into(binding.ivCurrentWeatherIcon)
     }
 
     // Displaying details:
@@ -193,8 +193,8 @@ class MainFragment : AbstractFragment() {
         recyclerView.apply {
             this.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             this.adapter =
-                if (rvType == "hourly") MainHourlyForecastAdapter()
-                else MainDailyForecastAdapter(requireContext())
+                if (rvType == "hourly") MainHourlyForecastAdapter(::getIcon)
+                else MainDailyForecastAdapter(requireContext(), ::getIcon)
         }
     }
 }

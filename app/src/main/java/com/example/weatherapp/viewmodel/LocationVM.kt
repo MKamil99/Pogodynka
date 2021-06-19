@@ -17,7 +17,7 @@ abstract class LocationVM(application: Application) : AndroidViewModel(applicati
     // Current location:
     private val mutCurrentLocation = MutableLiveData<Location>()
     val currentLocation : LiveData<Location> get() = mutCurrentLocation
-    fun launchGPS(activity: Activity, searchNow : Boolean = false) {
+    fun launchGPS(activity: Activity) {
         // Request permissions to use GPS (based on: https://www.tutorialspoint.com/how-to-get-the-current-gps-location-programmatically-on-android-using-kotlin):
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
             && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

@@ -3,6 +3,7 @@ package com.example.weatherapp.view
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.graphics.Typeface
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -71,7 +72,7 @@ class SeniorFragment : AbstractFragment() {
         })
 
         // Check location:
-        weatherVM.launchGPS(requireActivity(), weatherVM.currentWeather.value == null && isConnectedToInternet(requireActivity()))
+        weatherVM.launchGPS(requireActivity())
 
         return binding.root
     }
@@ -92,8 +93,8 @@ class SeniorFragment : AbstractFragment() {
         binding.tvDescription.text = currentWeather.weather[0].description.replaceFirstChar { char -> char.uppercase() }
 
         // Icon:
-        val url = "https://openweathermap.org/img/wn/${currentWeather.weather[0].icon}@4x.png"
-        Glide.with(binding.root).load(url).centerCrop().into(binding.ivCurrentWeatherIcon)
+        val icon = getIcon(currentWeather.weather[0].icon)
+        Glide.with(binding.root).load(icon).centerCrop().into(binding.ivCurrentWeatherIcon)
     }
 
     // Displaying details:
@@ -202,8 +203,8 @@ class SeniorFragment : AbstractFragment() {
         recyclerView.apply {
             this.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             this.adapter =
-                if (rvType == "hourly") SeniorHourlyForecastAdapter()
-                else SeniorDailyForecastAdapter(requireContext())
+                if (rvType == "hourly") SeniorHourlyForecastAdapter(::getIcon)
+                else SeniorDailyForecastAdapter(requireContext(), ::getIcon)
         }
     }
 

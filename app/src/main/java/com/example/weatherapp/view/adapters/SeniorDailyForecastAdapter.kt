@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.weatherapp.R
@@ -13,7 +14,8 @@ import java.text.SimpleDateFormat
 import kotlin.math.roundToInt
 
 // Adapter used in displaying daily forecast in Senior Fragment:
-class SeniorDailyForecastAdapter(private val context : Context) : RecyclerView.Adapter<SeniorDailyForecastAdapter.ViewHolder>() {
+class SeniorDailyForecastAdapter(private val context : Context,
+                                 private val getIcon : (String) -> Int) : RecyclerView.Adapter<SeniorDailyForecastAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : ViewHolder {
         val view = TileBigBinding.inflate(LayoutInflater.from(parent.context))
         return ViewHolder(view)
@@ -30,8 +32,8 @@ class SeniorDailyForecastAdapter(private val context : Context) : RecyclerView.A
                 else SimpleDateFormat("EEEE").format(item.dt.times(1000))
 
             // Icon:
-            val url = "https://openweathermap.org/img/wn/${item.weather[0].icon}@4x.png"
-            Glide.with(binding.root).load(url).centerCrop().into(binding.ivWeatherIcon)
+            val icon = getIcon(item.weather[0].icon)
+            Glide.with(binding.root).load(icon).centerCrop().into(binding.ivWeatherIcon)
 
             // Minimum and maximum temperatures:
             binding.tvTemperature.text = "Max: ${item.temp.max.roundToInt()}°C\n Min: ${item.temp.min.roundToInt()}°C"

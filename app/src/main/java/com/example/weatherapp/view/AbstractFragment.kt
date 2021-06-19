@@ -66,6 +66,30 @@ abstract class AbstractFragment : Fragment() {
         }.show()
     }
 
+    // Returning proper image:
+    protected fun getIcon(code : String) : Int {
+        return when (code) {
+            "01d" -> R.drawable.weather_01d
+            "01n" -> R.drawable.weather_01n
+            "02d" -> R.drawable.weather_02d
+            "02n" -> R.drawable.weather_02n
+            "03d" -> R.drawable.weather_03d
+            "03n" -> R.drawable.weather_03n
+            "04d" -> R.drawable.weather_04d
+            "04n" -> R.drawable.weather_04n
+            "09d" -> R.drawable.weather_09d
+            "09n" -> R.drawable.weather_09n
+            "10d" -> R.drawable.weather_10d
+            "10n" -> R.drawable.weather_10n
+            "11d" -> R.drawable.weather_11d
+            "11n" -> R.drawable.weather_11n
+            "13d" -> R.drawable.weather_13d
+            "13n" -> R.drawable.weather_13n
+            "50d" -> R.drawable.weather_50d
+            else ->  R.drawable.weather_50n // "50n"
+        }
+    }
+
 
     //                                   APP BAR ACTIONS
 

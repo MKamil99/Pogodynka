@@ -3,6 +3,7 @@ package com.example.weatherapp.view.adapters
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.weatherapp.databinding.TileBinding
@@ -11,7 +12,7 @@ import java.text.SimpleDateFormat
 import kotlin.math.roundToInt
 
 // Adapter used in displaying hourly forecast in Main Fragment:
-class MainHourlyForecastAdapter : RecyclerView.Adapter<MainHourlyForecastAdapter.ViewHolder>() {
+class MainHourlyForecastAdapter(private val getIcon : (String) -> Int) : RecyclerView.Adapter<MainHourlyForecastAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : ViewHolder {
         val view = TileBinding.inflate(LayoutInflater.from(parent.context))
         return ViewHolder(view)
@@ -26,8 +27,8 @@ class MainHourlyForecastAdapter : RecyclerView.Adapter<MainHourlyForecastAdapter
             binding.tvDateOrTime.text = SimpleDateFormat("HH:mm").format(item.dt.times(1000))
 
             // Icon:
-            val url = "https://openweathermap.org/img/wn/${item.weather[0].icon}@4x.png"
-            Glide.with(binding.root).load(url).centerCrop().into(binding.ivWeatherIcon)
+            val icon = getIcon(item.weather[0].icon)
+            Glide.with(binding.root).load(icon).centerCrop().into(binding.ivWeatherIcon)
 
             // Temperature:
             binding.tvTemperature.text = "${item.temp.roundToInt()}°C"
