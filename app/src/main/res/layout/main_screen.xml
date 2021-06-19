@@ -60,7 +60,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="15dp">
+                    android:paddingTop="15dp"
+                    android:paddingHorizontal="5dp">
 
                     <TextView
                         android:id="@+id/tv_city"
@@ -130,6 +131,23 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tv_feelsLike" />
+
+                    <Button
+                        android:id="@+id/btn_refresh"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:backgroundTint="@android:color/transparent"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:text="@string/refresh"
+                        android:textColor="#80FFFFFF"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        app:icon="@android:drawable/stat_notify_sync"
+                        app:iconGravity="start"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_description" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

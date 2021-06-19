@@ -47,10 +47,12 @@
 
     <!-- Start view -->
     <string name="placeholderValue">BRAK DANYCH</string>
-    <string name="placeholderValue2">Wprowadź nazwę miasta lub pobierz dane z lokalizacji.</string>
+    <string name="placeholderValue2">Wprowadź nazwę miasta \n lub pobierz dane z lokalizacji.</string>
 
     <!-- Other strings -->
     <string name="footer">Aplikacja korzysta z danych udostępnianych przez serwis OpenWeatherMap</string>
     <string name="today">dzisiaj</string>
     <string name="feels_like">Odczuwalne:</string>
+    <string name="refresh">ODŚWIEŻ</string>
+    <string name="refreshed">Odświeżono: </string>
 </resources>

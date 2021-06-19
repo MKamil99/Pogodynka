@@ -47,10 +47,12 @@
 
     <!-- Start view -->
     <string name="placeholderValue">NO DATA</string>
-    <string name="placeholderValue2">Enter city name or get data from GPS.</string>
+    <string name="placeholderValue2">Enter city name \n or get data from GPS.</string>
 
     <!-- Other strings -->
     <string name="footer">Application uses data from OpenWeatherMap</string>
     <string name="today">Today</string>
     <string name="feels_like">Feels like:</string>
+    <string name="refresh">REFRESH</string>
+    <string name="refreshed">Refreshed at: </string>
 </resources>

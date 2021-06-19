@@ -21,11 +21,13 @@ abstract class WeatherVM : ViewModel() {
     // Current weather:
     private val mutCurrentWeather = MutableLiveData<CurrentWeatherResponse>()
     val currentWeather : LiveData<CurrentWeatherResponse> get() = mutCurrentWeather
-    fun setCurrentWeather(cityName : String) {
-        viewModelScope.launch {
-            val response = repository.getCurrentWeather(cityName, language).awaitResponse()
-            mutCityExists.value = response.isSuccessful
-            if (response.isSuccessful && response.body() != null) mutCurrentWeather.value = response.body()
+    fun setCurrentWeather(cityName : String?) {
+        if (!cityName.isNullOrEmpty()) {
+            viewModelScope.launch {
+                val response = repository.getCurrentWeather(cityName, language).awaitResponse()
+                mutCityExists.value = response.isSuccessful
+                if (response.isSuccessful && response.body() != null) mutCurrentWeather.value = response.body()
+            }
         }
     }
     fun setCurrentWeatherByCoordination(latitude : Double?, longitude : Double?) {
@@ -50,13 +52,15 @@ abstract class WeatherVM : ViewModel() {
     private val mutCurrentDailyForecast = MutableLiveData<List<SpecificDayForecast>>()
     val currentHourlyForecast : LiveData<List<SpecificHourForecast>> get() = mutCurrentHourlyForecast
     val currentDailyForecast : LiveData<List<SpecificDayForecast>> get() = mutCurrentDailyForecast
-    fun setForecasts(latitude : Double, longitude : Double) {
-        viewModelScope.launch {
-            val response = repository.getForecasts(latitude, longitude, language).awaitResponse()
-            if (response.isSuccessful) {
-                val data = response.body()
-                mutCurrentHourlyForecast.value = data?.hourly?.subList(1, 25)
-                mutCurrentDailyForecast.value = data?.daily?.subList(0, 7)
+    fun setForecasts(latitude : Double?, longitude : Double?) {
+        if (latitude != null && longitude != null) {
+            viewModelScope.launch {
+                val response = repository.getForecasts(latitude, longitude, language).awaitResponse()
+                if (response.isSuccessful) {
+                    val data = response.body()
+                    mutCurrentHourlyForecast.value = data?.hourly?.subList(1, 25)
+                    mutCurrentDailyForecast.value = data?.daily?.subList(0, 7)
+                }
             }
         }
     }

@@ -24,6 +24,7 @@ class MainFragment : AbstractFragment() {
     // Binding with layout:
     private var _binding: MainScreenBinding? = null
     private val binding get() = _binding!!
+    @SuppressLint("SimpleDateFormat")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = MainScreenBinding.inflate(inflater, container, false)
 
@@ -36,6 +37,7 @@ class MainFragment : AbstractFragment() {
             setDetails(currentWeather)
             hidePlaceholder()
             weatherVM.setForecasts(currentWeather.coord.lat, currentWeather.coord.lon)
+            binding.btnRefresh.text = SimpleDateFormat("dd.MM HH:mm").format(Date())
         })
 
         // Displaying hourly forecast for next 24 hours:
@@ -120,7 +122,7 @@ class MainFragment : AbstractFragment() {
     }
 
     // Installing RecyclerViews and Buttons:
-    @SuppressLint("ResourceType")
+    @SuppressLint("ResourceType", "SimpleDateFormat")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -177,6 +179,12 @@ class MainFragment : AbstractFragment() {
 
                 else -> false
             }
+        }
+
+        // Refresh Button:
+        binding.btnRefresh.setOnClickListener {
+            weatherVM.setForecasts(weatherVM.currentWeather.value?.coord?.lat, weatherVM.currentWeather.value?.coord?.lon)
+            binding.btnRefresh.text = SimpleDateFormat("dd.MM HH:mm").format(Date())
         }
     }
 
