@@ -32,6 +32,8 @@ abstract class DatabaseVM(application: Application) : LocationVM(application) {
     //                                 HOURLY AND DAILY FORECASTS
     private val hourRepository : HourDataRepository = HourDataRepository(database.hourDataDao())
     private val dayRepository : DayDataRepository = DayDataRepository(database.dayDataDao())
+    val hourForecast = hourRepository.readAll
+    val dayForecast = dayRepository.readAll
     protected fun saveForecasts(data : OneCallResponse) {
         viewModelScope.launch {
             // Delete old records:

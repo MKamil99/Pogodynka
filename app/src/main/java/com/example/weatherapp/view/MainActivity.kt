@@ -1,7 +1,10 @@
 package com.example.weatherapp.view
 
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.AttributeSet
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.weatherapp.databinding.ActivityMainBinding
@@ -16,13 +19,25 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+    }
 
+    override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
         // Gathering data from Room:
         weatherVM = ViewModelProvider(this).get(WeatherVM::class.java)
         weatherVM.weatherInfo.observe(this, {
             if (it != null && weatherVM.currentWeather.value == null)
                 weatherVM.setCurrentWeatherByRoomData(it)
         })
+        weatherVM.hourForecast.observe(this, {
+            if (it != null && weatherVM.currentHourlyForecast.value == null)
+                weatherVM.setHourlyForecastByRoomData(it)
+        })
+        weatherVM.dayForecast.observe(this, {
+            if (it != null && weatherVM.currentDailyForecast.value == null)
+                weatherVM.setDailyForecastByRoomData(it)
+        })
+
+        return super.onCreateView(name, context, attrs)
     }
 
     // Reaction for granting GPS permissions:

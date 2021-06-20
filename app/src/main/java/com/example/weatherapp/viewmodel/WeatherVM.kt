@@ -4,6 +4,8 @@ import android.app.Application
 import androidx.lifecycle.*
 import com.example.weatherapp.model.*
 import com.example.weatherapp.model.api.*
+import com.example.weatherapp.model.db.DayData
+import com.example.weatherapp.model.db.HourData
 import com.example.weatherapp.model.db.WeatherData
 import com.example.weatherapp.model.responses.CurrentWeatherResponse
 import kotlinx.coroutines.launch
@@ -101,5 +103,51 @@ class WeatherVM(application: Application) : DatabaseVM(application) {
             SunTimes(data.sunrise, data.sunset),
             data.cityName
         )
+    }
+
+    // Updating hourly forecast with Room data:
+    fun setHourlyForecastByRoomData(data : List<HourData>) {
+        val forecast = mutableListOf<SpecificHourForecast>()
+        val currentTime = Date().time / 1000
+        for (hour in data) {
+            // If certain hour is already gone, it won't be displayed...
+            if (currentTime < hour.dt)
+                forecast.add(
+                    SpecificHourForecast(
+                        hour.dt,
+                        hour.temp,
+                        listOf(Weather(hour.description, hour.icon))
+                    )
+                )
+        }
+
+        // If all of the hours are already gone, the card will not be displayed...
+        if (forecast.size != 0) mutCurrentHourlyForecast.value = forecast
+    }
+
+    // Updating daily forecast with Room data:
+    fun setDailyForecastByRoomData(data : List<DayData>) {
+        val forecast = mutableListOf<SpecificDayForecast>()
+        val currentTime = Date().time / 1000
+
+        // API delivers dates with "midday time", for example: Sun Jun 20 12:00:00 GMT+02:00 2021,
+        // which means that we have to get rid of these 12 hours, but also add one additional day
+        // so "Today" will be displayed too. So in if-statement we add 12 hours to each stored time.
+        val deltaTime = 12 * 60 * 60
+
+        for (day in data) {
+            // If certain day is already gone, it won't be displayed...
+            if (currentTime < day.dt + deltaTime)
+                forecast.add(
+                    SpecificDayForecast(
+                        day.dt,
+                        Temperatures(day.max, day.min),
+                        listOf(Weather(day.description, day.icon))
+                    )
+                )
+        }
+
+        // If all of the days are already gone, the card will not be displayed...
+        if (forecast.size != 0) mutCurrentDailyForecast.value = forecast
     }
 }
