@@ -13,6 +13,6 @@ interface WeatherDataDao {
     @Query("DELETE FROM main_table")
     suspend fun deleteWeatherData()
 
-    @Query("SELECT * FROM main_table")
-    fun getWholeWeather() : LiveData<List<WeatherData>>
+    @Query("SELECT * FROM main_table LIMIT 1")
+    fun getWeatherData() : LiveData<WeatherData>
 }

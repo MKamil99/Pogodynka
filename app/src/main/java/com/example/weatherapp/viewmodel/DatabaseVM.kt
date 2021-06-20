@@ -13,6 +13,7 @@ abstract class DatabaseVM(application: Application) : LocationVM(application) {
 
     //                                      MAIN INFO
     private val weatherRepository : WeatherDataRepository = WeatherDataRepository(database.weatherDataDao())
+    val weatherInfo = weatherRepository.readAll
     protected fun saveWeatherInfo(data : CurrentWeatherResponse) {
         viewModelScope.launch {
             // Delete old records:

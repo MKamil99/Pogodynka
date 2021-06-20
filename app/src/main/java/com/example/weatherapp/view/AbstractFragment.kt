@@ -27,7 +27,7 @@ abstract class AbstractFragment : Fragment() {
     }
 
 
-    //                                    CREATING VIEWS
+    //                                         VIEWS
 
     // Function responsible for adding input field in "searching city" dialog
     // (based on: https://android--code.blogspot.com/2020/03/android-kotlin-alertdialog-edittext.html):
@@ -91,7 +91,7 @@ abstract class AbstractFragment : Fragment() {
     }
 
 
-    //                                   APP BAR ACTIONS
+    //                                        ACTIONS
 
     // Result of clicking Search in Search Dialog:
     protected fun searchAction(view : View, editText: TextInputEditText, isSeniorMode: Boolean) {
@@ -112,14 +112,23 @@ abstract class AbstractFragment : Fragment() {
             makeSnackbar(view, resources.getString(R.string.internetNotFound), isSeniorMode)
         // Update weather info:
         else weatherVM.setCurrentWeatherByCoordination(
-            weatherVM.currentLocation.value!!.latitude,
-            weatherVM.currentLocation.value!!.longitude)
+            weatherVM.currentLocation.value?.latitude,
+            weatherVM.currentLocation.value?.longitude)
     }
 
     // Result of clicking Change in Changing Display Dialog:
     protected fun changeDisplayAction(view: View, isSeniorMode: Boolean) {
         if (isSeniorMode) view.findNavController().navigate(R.id.action_seniorFragment_to_mainFragment)
         else view.findNavController().navigate(R.id.action_mainFragment_to_seniorFragment)
+    }
+
+    // Result of clicking Refresh in Main Weather Info:
+    protected fun refreshAction(view: View, isSeniorMode: Boolean) {
+        // Check internet connection:
+        if (!isConnectedToInternet(requireContext()))
+            makeSnackbar(view, resources.getString(R.string.internetNotFound), isSeniorMode)
+        // Update weather info:
+        else weatherVM.setCurrentWeatherByName(weatherVM.currentWeather.value?.name)
     }
 
 

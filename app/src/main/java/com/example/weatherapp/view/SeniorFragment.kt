@@ -3,7 +3,6 @@ package com.example.weatherapp.view
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.graphics.Typeface
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -38,11 +37,15 @@ class SeniorFragment : AbstractFragment() {
 
         // Displaying current weather:
         weatherVM.currentWeather.observe(viewLifecycleOwner, { currentWeather ->
+            // Show everything correctly:
             setMainInfo(currentWeather)
             setDetails(currentWeather)
             hidePlaceholder()
-            weatherVM.setForecasts(currentWeather.coord.lat, currentWeather.coord.lon)
-            binding.btnRefresh.text = "${getString(R.string.refreshed)} ${SimpleDateFormat("dd.MM HH:mm").format(Date())}"
+            binding.btnRefresh.text = "${getString(R.string.refreshed)} ${SimpleDateFormat("dd.MM HH:mm").format(Date(currentWeather.dt * 1000))}"
+
+            // Get data for forecasts:
+            if (isConnectedToInternet(requireContext()))
+                weatherVM.setForecasts(currentWeather.coord.lat, currentWeather.coord.lon)
         })
 
         // Displaying hourly forecast for next 24 hours:
@@ -192,10 +195,7 @@ class SeniorFragment : AbstractFragment() {
         }
 
         // Refresh Button:
-        binding.btnRefresh.setOnClickListener {
-            weatherVM.setForecasts(weatherVM.currentWeather.value?.coord?.lat, weatherVM.currentWeather.value?.coord?.lon)
-            binding.btnRefresh.text = "${getString(R.string.refreshed)} ${SimpleDateFormat("dd.MM HH:mm").format(Date())}"
-        }
+        binding.btnRefresh.setOnClickListener { refreshAction(view, true) }
     }
 
     // Adding Linear Layout and Adapter to Recycler View:

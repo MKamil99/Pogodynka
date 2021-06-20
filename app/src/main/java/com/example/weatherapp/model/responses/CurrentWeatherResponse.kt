@@ -6,7 +6,6 @@ import com.example.weatherapp.model.SunTimes
 import com.example.weatherapp.model.Weather
 
 data class CurrentWeatherResponse(
-    val cod : String,
     val coord : Coordination,
     val weather : List<Weather>,
     val main : Details,

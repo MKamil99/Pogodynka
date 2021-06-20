@@ -33,11 +33,15 @@ class MainFragment : AbstractFragment() {
 
         // Displaying current weather:
         weatherVM.currentWeather.observe(viewLifecycleOwner, { currentWeather ->
+            // Show everything correctly:
             setMainInfo(currentWeather)
             setDetails(currentWeather)
             hidePlaceholder()
-            weatherVM.setForecasts(currentWeather.coord.lat, currentWeather.coord.lon)
-            binding.btnRefresh.text = SimpleDateFormat("dd.MM HH:mm").format(Date())
+            binding.btnRefresh.text = SimpleDateFormat("dd.MM HH:mm").format(Date(currentWeather.dt * 1000))
+
+            // Get data for forecasts:
+            if (isConnectedToInternet(requireContext()))
+                weatherVM.setForecasts(currentWeather.coord.lat, currentWeather.coord.lon)
         })
 
         // Displaying hourly forecast for next 24 hours:
@@ -182,10 +186,7 @@ class MainFragment : AbstractFragment() {
         }
 
         // Refresh Button:
-        binding.btnRefresh.setOnClickListener {
-            weatherVM.setForecasts(weatherVM.currentWeather.value?.coord?.lat, weatherVM.currentWeather.value?.coord?.lon)
-            binding.btnRefresh.text = SimpleDateFormat("dd.MM HH:mm").format(Date())
-        }
+        binding.btnRefresh.setOnClickListener { refreshAction(view, false) }
     }
 
     // Adding Linear Layout and Adapter to Recycler View:
